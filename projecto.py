@@ -9,10 +9,12 @@ from skimage.morphology import disk
 from skimage.feature import greycomatrix, greycoprops
 from skimage import data
 
+import os
+
 
 fig = plt.figure(figsize=(5,5))
 
-img = cv.imread("images/seagull_database_vis001_small.png")
+img = cv.imread("images/seagull_database_vis002_small.png")
 
 PATCH_SIZE = 16
 
@@ -103,46 +105,114 @@ def writeimg(title, img):
 	cv.imwrite(title,img)
 
 # Imagem 1
+# def ground_truth(img):
+# 	ground_truth = [0]*img.shape[0]
+
+# 	for i in range(len(img)):
+# 		if 2 <= i <= 10 or 15 <= i <= 50 or 53 <= i <= 85 or 89 <= i <= 97 or 105 <= i <= 111 or i == 119:
+# 			ground_truth[i] = 1
+# 		elif 51 <= i <= 52:
+# 			ground_truth[i] = 2
+# 		elif 86 <= i <= 88 or 98 <= i <= 104 or 112 <= i <= 118:
+# 			ground_truth[i] = 3
+
+# 	return ground_truth
+
+# Imagem 2
 def ground_truth(img):
-	ground_truth = np.zeros(img.shape[0])
+	ground_truth = [0]*img.shape[0]
+
 	for i in range(len(img)):
-		if 2 <= i <= 10 or 15 <= i <= 50 or 53 <= i <= 85 or 89 <= i <= 97 or 105 <= i <= 111 or i == 119:
+		if 1 <= i <= 13 or 15 <= i <= 65 or 69 <= i <= 119:
 			ground_truth[i] = 1
-		elif 51 <= i <= 52:
+		elif 66 <= i <= 68:
 			ground_truth[i] = 2
-		elif 86 <= i <= 88 or 98 <= i <= 104 or 112 <= i <= 118:
-			ground_truth[i] = 3
 
 	return ground_truth
 
-# # Imagem 2
+# # Imagem 3
 # def ground_truth(img):
-# 	ground_truth = np.zeros(img.shape[0])
+# 	ground_truth = [0]*img.shape[0]
+
 # 	for i in range(len(img)):
-# 		if 1 <= i <= 13 or 15 <= i <= 66 or 69 <= i <= 81 or 85 <= i <= 119:
+# 		if 0 <= i <= 63 or 65 <= i <= 119:
 # 			ground_truth[i] = 1
-# 		elif 67 <= i <= 68 or 82 <= i <= 84:
+# 		elif i == 64:
 # 			ground_truth[i] = 2
 
 # 	return ground_truth
 
-def write_or_read_pickle(bool,path,features,ground_truth):
-	mydict = dict([('features',[]),('ground_truth',[])])
-	if bool == 'write':
-		file = open(path,'wb')
-		pickle.dump(mydict,file)
-		file.close()
-	elif bool == 'read':
-		file = open(path,'rb')
-		pickle.load(file)
-		file.close()
-	elif bool == 'update':
-		file = open(path,'wb')
-		mydict['ground_truth'].append(ground_truth)
-		mydict['features'].append(features)
-		pickle.dump(mydict,file)
-		file.close()
-	return mydict
+# # Imagem 4
+# def ground_truth(img):
+# 	ground_truth = [0]*img.shape[0]
+
+# 	for i in range(len(img)):
+# 		if 2 <= i <= 26:
+# 			ground_truth[i] = 1
+# 		elif i == 27:
+# 			ground_truth[i] = 2
+
+# 	return ground_truth
+
+# # Imagem 5
+# def ground_truth(img):
+# 	ground_truth = [0]*img.shape[0]
+
+# 	for i in range(len(img)):
+# 		if 0 <= i <= 2 or 7 <= i <= 20 or 22 <= i <= 27:
+# 			ground_truth[i] = 1
+# 		elif i == 21:
+# 			ground_truth[i] = 2
+
+# 	return ground_truth
+
+# # Imagem 6
+# def ground_truth(img):
+# 	ground_truth = [0]*img.shape[0]
+
+# 	for i in range(len(img)):
+# 		if 0 <= i <= 9 or 13 <= i <= 15 or i == 20 or i == 27:
+# 			ground_truth[i] = 1
+# 		elif 10 <= i <= 12 or 16 <= i <= 19:
+# 			ground_truth[i] = 3
+
+# 	return ground_truth
+
+def read_file(path):
+
+	file_read = open(path,"rb")
+	example_dict = pickle.load(file_read)
+	file_read.close()
+
+	return example_dict
+
+def write_file(path,features,ground_truth):
+
+	file = open(path,"wb")
+	dic = {"features":features,"ground_truth":ground_truth}
+	pickle.dump(dic,file)
+	file.close()
+
+	return dic
+
+def read_or_write_pickle(path,new_features,new_ground_truth,default):
+
+	if os.path.isfile(path):
+		
+		dic = read_file(path)
+		feat = dic["features"]
+		gt = dic["ground_truth"]
+
+		feat = np.vstack((feat,new_features))
+		gt = np.hstack((gt,new_ground_truth))
+		# gt = np.reshape(gt,(gt.shape[1],gt.shape[0]))
+		write_file(path,feat,gt)
+
+		return "Juntou"
+	else:
+		return write_file(path,new_features,new_ground_truth)
+
+	return default
 
 classific = SVC()
 
@@ -162,7 +232,8 @@ img_dezaseis_b = dezaseis_dezaseis(lab[:,:,2],rows,cols,PATCH_SIZE)
 # 	print i
 # 	showimg("Blocks",resize(img_dezaseis_l[:][i],10,10))
 
-ground_truth = ground_truth(img_dezaseis_l)
+# ground_truth = ground_truth(img_dezaseis_l)
+# print ground_truth
 
 features = extract_features(img_dezaseis_l,img_dezaseis_b)
 
@@ -171,7 +242,7 @@ features = extract_features(img_dezaseis_l,img_dezaseis_b)
 # final = juntar_blocos(img_reconst,rows,cols,PATCH_SIZE)
 
 # showimg("Final", resize(final,2,2))
-
+# 
 # showimg("Original",lab[:,:,0])
 # showimg("Block",resize(img_dezaseis[:][0],10,10))
 # print res.shape
@@ -182,16 +253,17 @@ features = extract_features(img_dezaseis_l,img_dezaseis_b)
 
 # showimg("Final",resize(final,2,2))
 
-# write = write_or_read_pickle('write','classificado.p',features,ground_truth)
+# print read_or_write_pickle('classificado.p',features,ground_truth,"Erro")
+# print write_file('classificado.p',features,ground_truth)
 
-# read = write_or_read_pickle('read','classificado.p',features,ground_truth)
+read = read_file('classificado.p')
 
-# update = write_or_read_pickle('update','classificado.p',features,ground_truth)
-
-# print write
-# print read
-# print update
-
-# treino = train(classific,read['features'],read['ground_truth'])
-# teste = test(classific,features)
+treino = train(classific,read['features'],read['ground_truth'])
+teste = test(classific,features)
 # print teste
+
+img_reconst = reconst_img(img_dezaseis_l,teste,rows,cols,PATCH_SIZE)
+
+final = juntar_blocos(img_reconst,rows,cols,PATCH_SIZE)
+
+showimg("Final", resize(final,2,2))
