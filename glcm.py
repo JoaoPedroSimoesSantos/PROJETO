@@ -17,9 +17,14 @@ from mpl_toolkits import mplot3d
 fig = plt.figure(figsize=(8, 8))
 PATCH_SIZE = 16
 
+video = cv.VideoCapture('images/video2.mp4')
+ret, frame = video.read()
+cv.imwrite("frame1.png",frame)
 img = cv.imread("images/seagull_database_vis001_small.png")
-res = cv.resize(img,None,fx=0.5, fy=0.5, interpolation = cv.INTER_CUBIC)
-#res = cv.resize(img,None,fx=0.5, fy=0.5, interpolation = cv.INTER_CUBIC)
+print frame.shape
+# res = cv.resize(img,None,fx=0.5, fy=0.5, interpolation = cv.INTER_CUBIC)
+# res = cv.resize(frame,None,fx=0.5, fy=0.5, interpolation = cv.INTER_CUBIC)
+
 gray = cv.cvtColor(res,cv.COLOR_BGR2GRAY)
 lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
 #
@@ -27,12 +32,19 @@ lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
 ##cv.waitKey(0)
 ##cv.destroyAllWindows()
 #
- # select some patches from water areas of the image
-water_locations = [(10, 10),(110,220),(50,200),(240,350)]
+# select some patches from water areas of the image
+
+###Imagem 1
+water_locations = [(10, 10),(200,200),(50,200),(110,220),(240,350),(110,200)]
+print "Imagem 1"
+
+###Imagem 2
+# water_locations = [(10, 10),(240,350),(50,200),(150,230),(150,280)]
+# print "Imagem 2"
 
 water_patches = []
 for loc in water_locations:
-    water_patches.append(gray[loc[0]:loc[0] + PATCH_SIZE, loc[1]:loc[1] + PATCH_SIZE])
+    water_patches.append(lab[:,:,2][loc[0]:loc[0] + PATCH_SIZE, loc[1]:loc[1] + PATCH_SIZE])
 
 xs = []
 ys = []
@@ -43,6 +55,9 @@ for patch in (water_patches):
     
     media = np.mean(patch)
     desvio_padrao = np.std(patch)
+    desvio_padrao_a = np.std(patch)
+    desvio_padrao_b = np.std(patch)
+
     xs.append(media)
     ys.append(desvio_padrao)
 

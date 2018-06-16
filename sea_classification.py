@@ -177,6 +177,52 @@ def size_block(img):
 
 	return r[-1],c[-1]
 
+def read_file(path):
+
+	file_read = open(path,"rb")
+	example_dict = pickle.load(file_read)
+	file_read.close()
+
+	return example_dict
+
+def write_file(path,features,ground_truth):
+
+	file = open(path,"wb")
+	dic = {"features":features,"ground_truth":ground_truth}
+	pickle.dump(dic,file)
+	file.close()
+
+	return "Criou"
+
+def read_or_write_pickle(path,new_features,new_ground_truth,default):
+
+	if os.path.isfile(path):
+		
+		dic = read_file(path)
+		feat = dic["features"]
+		gt = dic["ground_truth"]
+
+		feat = np.vstack((feat,new_features))
+		gt = np.hstack((gt,new_ground_truth))
+		# gt = np.reshape(gt,(gt.shape[1],gt.shape[0]))
+		write_file(path,feat,gt)
+
+		return "Juntou"
+	else:
+		return write_file(path,new_features,new_ground_truth)
+
+	return default
+
+def classificator_train(classificator,features,ground_truth):
+	
+	classificator.fit(features,ground_truth)
+	
+	return classificator
+
+def classificator_test(classificator,features):
+
+	return classificator.predict(features)
+
 if __name__=="__main__":
 
 	plt.clf()
