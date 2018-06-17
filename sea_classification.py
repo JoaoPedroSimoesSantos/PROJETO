@@ -223,6 +223,7 @@ def classificator_test(classificator,features):
 
 	return classificator.predict(features)
 
+
 if __name__=="__main__":
 
 	plt.clf()
@@ -252,11 +253,11 @@ if __name__=="__main__":
 
 	# show_features_3d(features)
 
-	zeros,ground_truth = features_filter(features,window,3)
+	# zeros,ground_truth = features_filter(features,window,3)
 
-	print features
-	print ground_truth
-	show_features_3d_2(features,ground_truth)
+	# print features
+	# print ground_truth
+	# show_features_3d_2(features,ground_truth)
 
 	# show_features_1d(features,ground_truth)
 	
@@ -279,15 +280,15 @@ if __name__=="__main__":
 	
 	
 	# zeros = reconstruct_GT_aux(predi,window)
-	zeros = reconstruct_GT_aux(ground_truth,window)
+	# zeros = reconstruct_GT_aux(ground_truth,window)
 
-	image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
-	# contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+	# image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
+	# # contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
-	# print "Antes",contours
-	# cv.drawContours(img, np.multiply(contours,2), -1, (0,0,255), 2)
-	# print "Depois",contours*2
+	# # print "Antes",contours
+	# # cv.drawContours(img, np.multiply(contours,2), -1, (0,0,255), 2)
+	# # print "Depois",contours*2
 
-	cv.imshow("Imagem Reconstruida",image_reconstructed)
-	cv.waitKey(0)
-	cv.destroyAllWindows()
+	# cv.imshow("Imagem Reconstruida",image_reconstructed)
+	# cv.waitKey(0)
+	# cv.destroyAllWindows()
