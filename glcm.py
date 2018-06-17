@@ -17,12 +17,10 @@ from mpl_toolkits import mplot3d
 fig = plt.figure(figsize=(8, 8))
 PATCH_SIZE = 16
 
-video = cv.VideoCapture('images/video2.mp4')
-ret, frame = video.read()
-cv.imwrite("frame1.png",frame)
-img = cv.imread("images/seagull_database_vis001_small.png")
-print frame.shape
-# res = cv.resize(img,None,fx=0.5, fy=0.5, interpolation = cv.INTER_CUBIC)
+# img = cv.imread("images/seagull_database_vis002_small.png")
+img = cv.imread("images/Frame61.jpg")
+
+res = cv.resize(img,None,fx=0.5, fy=0.5, interpolation = cv.INTER_CUBIC)
 # res = cv.resize(frame,None,fx=0.5, fy=0.5, interpolation = cv.INTER_CUBIC)
 
 gray = cv.cvtColor(res,cv.COLOR_BGR2GRAY)
@@ -34,17 +32,27 @@ lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
 #
 # select some patches from water areas of the image
 
-###Imagem 1
-water_locations = [(10, 10),(200,200),(50,200),(110,220),(240,350),(110,200)]
-print "Imagem 1"
+# ###Imagem 1
+# water_locations = [(10, 10),(200,200),(50,200),(110,220),(240,350),(110,200)]
+# print "Imagem 1"
 
-###Imagem 2
+# ##Imagem 2
 # water_locations = [(10, 10),(240,350),(50,200),(150,230),(150,280)]
 # print "Imagem 2"
+# print gray.shape
+
+###Frame 61
+water_locations = [(10, 10),(510,200),(200,200),(520,715),(110,220)]
+print "Frame 61"
+
+# ###Frame 61 SMALL
+# water_locations = [(10, 10),(200,230),(50,200),(255,355),(70,100)]
+# print "Frame 61"
+# print gray.shape
 
 water_patches = []
 for loc in water_locations:
-    water_patches.append(lab[:,:,2][loc[0]:loc[0] + PATCH_SIZE, loc[1]:loc[1] + PATCH_SIZE])
+    water_patches.append(gray[loc[0]:loc[0] + PATCH_SIZE, loc[1]:loc[1] + PATCH_SIZE])
 
 xs = []
 ys = []

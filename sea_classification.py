@@ -254,6 +254,8 @@ if __name__=="__main__":
 
 	zeros,ground_truth = features_filter(features,window,3)
 
+	print features
+	print ground_truth
 	show_features_3d_2(features,ground_truth)
 
 	# show_features_1d(features,ground_truth)
