@@ -9,12 +9,14 @@ from skimage.morphology import disk
 from skimage.feature import greycomatrix, greycoprops
 from skimage import data
 
+from mpl_toolkits.mplot3d import Axes3D
+
 import os
 
 
 fig = plt.figure(figsize=(5,5))
 
-img = cv.imread("images/seagull_database_vis002_small.png")
+img = cv.imread("images/seagull_database_vis001_small.png")
 
 PATCH_SIZE = 16
 
@@ -104,31 +106,82 @@ def showimg(title, img):
 def writeimg(title, img):
 	cv.imwrite(title,img)
 
-# Imagem 1
+def read_file(path):
+
+	file_read = open(path,"rb")
+	example_dict = pickle.load(file_read)
+	file_read.close()
+
+	return example_dict
+
+def write_file(path,features,ground_truth):
+
+	file = open(path,"wb")
+	dic = {"features":features,"ground_truth":ground_truth}
+	pickle.dump(dic,file)
+	file.close()
+
+	return dic
+
+def read_or_write_pickle(path,new_features,new_ground_truth,default):
+
+	if os.path.isfile(path):
+		
+		dic = read_file(path)
+		feat = dic["features"]
+		gt = dic["ground_truth"]
+
+		feat = np.vstack((feat,new_features))
+		gt = np.hstack((gt,new_ground_truth))
+		# gt = np.reshape(gt,(gt.shape[1],gt.shape[0]))
+		write_file(path,feat,gt)
+
+		return "Juntou"
+	else:
+		return write_file(path,new_features,new_ground_truth)
+
+	return default
+
+def show_features_3d_2(features,ground_truth):
+
+	ax = plt.axes(projection='3d')
+	ax.scatter3D(features[ground_truth==3,0],features[ground_truth==3,1],features[ground_truth==3,2], color = 'yellow',marker = 's')
+	ax.scatter3D(features[ground_truth==2,0],features[ground_truth==2,1],features[ground_truth==2,2], color = 'green',marker = 's')
+	ax.scatter3D(features[ground_truth==1,0],features[ground_truth==1,1],features[ground_truth==1,2], color = 'blue',marker = 's')
+	ax.scatter3D(features[ground_truth==0,0],features[ground_truth==0,1],features[ground_truth==0,2], color = 'red', marker = 'o')
+	ax.set_xlabel("Contraste")
+	ax.set_ylabel("Media de B")
+	ax.set_zlabel("Desvio de B")
+	ax.legend()
+	plt.show()
+
+# # Imagem 1
 # def ground_truth(img):
 # 	ground_truth = [0]*img.shape[0]
 
 # 	for i in range(len(img)):
-# 		if 2 <= i <= 10 or 15 <= i <= 50 or 53 <= i <= 85 or 89 <= i <= 97 or 105 <= i <= 111 or i == 119:
+# 		if 60 <= i <= 86 or 90 <= i <= 117 or 120 <= i <= 218 or 226 <= i <= 324 or 327 <= i <= 378 or 384 <= i <= 408 or 418 <= i <= 437 or 448 <= i <= 465 or 478 <= i <= 495 or i == 509:
 # 			ground_truth[i] = 1
-# 		elif 51 <= i <= 52:
+# 		elif 223 <= i <= 225:
 # 			ground_truth[i] = 2
-# 		elif 86 <= i <= 88 or 98 <= i <= 104 or 112 <= i <= 118:
+# 		elif 219 <= i <= 222:
 # 			ground_truth[i] = 3
+# 		elif 325 <= i <= 326 or 379 <= i <= 383 or 409 <= i <= 417 or 438 <= i <= 447 or 466 <= i <= 477 or 496 <= i <= 508:
+# 			ground_truth[i] = 4
 
 # 	return ground_truth
 
-# Imagem 2
-def ground_truth(img):
-	ground_truth = [0]*img.shape[0]
+# # Imagem 2
+# def ground_truth(img):
+# 	ground_truth = [0]*img.shape[0]
 
-	for i in range(len(img)):
-		if 1 <= i <= 13 or 15 <= i <= 65 or 69 <= i <= 119:
-			ground_truth[i] = 1
-		elif 66 <= i <= 68:
-			ground_truth[i] = 2
+# 	for i in range(len(img)):
+# 		if 1 <= i <= 13 or 15 <= i <= 65 or 69 <= i <= 119:
+# 			ground_truth[i] = 1
+# 		elif 66 <= i <= 68:
+# 			ground_truth[i] = 2
 
-	return ground_truth
+# 	return ground_truth
 
 # # Imagem 3
 # def ground_truth(img):
@@ -178,70 +231,40 @@ def ground_truth(img):
 
 # 	return ground_truth
 
-def read_file(path):
 
-	file_read = open(path,"rb")
-	example_dict = pickle.load(file_read)
-	file_read.close()
-
-	return example_dict
-
-def write_file(path,features,ground_truth):
-
-	file = open(path,"wb")
-	dic = {"features":features,"ground_truth":ground_truth}
-	pickle.dump(dic,file)
-	file.close()
-
-	return dic
-
-def read_or_write_pickle(path,new_features,new_ground_truth,default):
-
-	if os.path.isfile(path):
-		
-		dic = read_file(path)
-		feat = dic["features"]
-		gt = dic["ground_truth"]
-
-		feat = np.vstack((feat,new_features))
-		gt = np.hstack((gt,new_ground_truth))
-		# gt = np.reshape(gt,(gt.shape[1],gt.shape[0]))
-		write_file(path,feat,gt)
-
-		return "Juntou"
-	else:
-		return write_file(path,new_features,new_ground_truth)
-
-	return default
 
 classific = SVC()
 
-res = resize(img,0.25,0.25)
+res = resize(img,0.5,0.5)
 lab = lab_plan(res)
 
 rows = lab.shape[0]/PATCH_SIZE
 cols = lab.shape[1]/PATCH_SIZE
+
 
 img_dezaseis_l = dezaseis_dezaseis(lab[:,:,0],rows,cols,PATCH_SIZE)
 img_dezaseis_b = dezaseis_dezaseis(lab[:,:,2],rows,cols,PATCH_SIZE)
 
 # showimg("Original",res)
 
-##Mostrar os blocks:
+#Mostrar os blocks:
 # for i in range(len(img_dezaseis_l)):
 # 	print i
 # 	showimg("Blocks",resize(img_dezaseis_l[:][i],10,10))
+# 	glcm = greycomatrix(img_dezaseis_l[i], [1], [0, np.pi/2, np.pi/4, 3*np.pi/4], symmetric=True, normed=True)
+# 	print np.array([greycoprops(glcm, 'contrast')[0, 0],np.mean(img_dezaseis_b[i]),np.std(img_dezaseis_b[i])])
 
-# ground_truth = ground_truth(img_dezaseis_l)
-# print ground_truth
+ground_truth = ground_truth(img_dezaseis_l)
+print ground_truth
 
-features = extract_features(img_dezaseis_l,img_dezaseis_b)
+# features = extract_features(img_dezaseis_l,img_dezaseis_b)
+# print features
 
-# img_reconst = reconst_img(img_dezaseis_l,ground_truth,rows,cols,PATCH_SIZE)
+img_reconst = reconst_img(img_dezaseis_l,ground_truth,rows,cols,PATCH_SIZE)
 
-# final = juntar_blocos(img_reconst,rows,cols,PATCH_SIZE)
+final = juntar_blocos(img_reconst,rows,cols,PATCH_SIZE)
 
-# showimg("Final", resize(final,2,2))
+showimg("Final", resize(final,2,2))
 # 
 # showimg("Original",lab[:,:,0])
 # showimg("Block",resize(img_dezaseis[:][0],10,10))
@@ -256,14 +279,16 @@ features = extract_features(img_dezaseis_l,img_dezaseis_b)
 # print read_or_write_pickle('classificado.p',features,ground_truth,"Erro")
 # print write_file('classificado.p',features,ground_truth)
 
-read = read_file('classificado.p')
+# read = read_file('classificado.p')
 
-treino = train(classific,read['features'],read['ground_truth'])
-teste = test(classific,features)
-# print teste
+# show_features_3d_2(np.array([read['features']]),np.array([read['ground_truth']]))
 
-img_reconst = reconst_img(img_dezaseis_l,teste,rows,cols,PATCH_SIZE)
+# treino = train(classific,read['features'],read['ground_truth'])
+# teste = test(classific,features)
+# # print teste
 
-final = juntar_blocos(img_reconst,rows,cols,PATCH_SIZE)
+# img_reconst = reconst_img(img_dezaseis_l,teste,rows,cols,PATCH_SIZE)
 
-showimg("Final", resize(final,2,2))
+# final = juntar_blocos(img_reconst,rows,cols,PATCH_SIZE)
+
+# showimg("Final", resize(final,2,2))
