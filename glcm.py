@@ -74,11 +74,11 @@ ys = []
 zs = []
 for patch in (water_patches):
     glcm = greycomatrix(patch, [1], [0, np.pi/2, np.pi, 3*np.pi/2], symmetric=True, normed=True)
-    # zs.append(greycoprops(glcm, 'contrast')[0, 0])
+    zs.append(greycoprops(glcm, 'contrast')[0, 0])
     # zs.append(greycoprops(glcm, 'energy')[0, 0])
     # zs.append(greycoprops(glcm, 'correlation')[0, 0])
     # zs.append(greycoprops(glcm, 'dissimilarity')[0, 0])
-    zs.append(greycoprops(glcm, 'ASM')[0, 0])
+    # zs.append(greycoprops(glcm, 'ASM')[0, 0])
 
     media = np.mean(patch)
     desvio_padrao = np.std(patch)
