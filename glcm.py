@@ -17,12 +17,12 @@ from mpl_toolkits import mplot3d
 fig = plt.figure(figsize=(8, 8))
 PATCH_SIZE = 16
 
-# img = cv.imread("images/seagull_database_vis002_small.png")
-img = cv.imread("images/Frame61.jpg")
+img = cv.imread("images/seagull_database_vis001_small.png")
+# img = cv.imread("images/Frame61.jpg")
 
 res = cv.resize(img,None,fx=0.5, fy=0.5, interpolation = cv.INTER_CUBIC)
 # res = cv.resize(frame,None,fx=0.5, fy=0.5, interpolation = cv.INTER_CUBIC)
-
+# print "SHAPE", res.shape
 gray = cv.cvtColor(res,cv.COLOR_BGR2GRAY)
 lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
 #
@@ -32,22 +32,37 @@ lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
 #
 # select some patches from water areas of the image
 
-# ###Imagem 1
-# water_locations = [(10, 10),(200,200),(50,200),(110,220),(240,350),(110,200)]
-# print "Imagem 1"
+###Imagem 1
+water_locations = [(10, 10),(200,200),(50,200),(110,220),(240,350),(110,200)]
+print "Imagem 1"
+
+# ### Imagem vis001_01
+# water_locations = [(110,225)]
+# print "Imagem 1_01"
+# print gray.shape
 
 # ##Imagem 2
 # water_locations = [(10, 10),(240,350),(50,200),(150,230),(150,280)]
 # print "Imagem 2"
 # print gray.shape
 
-###Frame 61
-water_locations = [(10, 10),(510,200),(200,200),(520,715),(110,220)]
-print "Frame 61"
+# ###Frame 61
+# water_locations = [(10, 10),(510,200),(200,200),(520,715),(110,220)]
+# print "Frame 61"
 
 # ###Frame 61 SMALL
 # water_locations = [(10, 10),(200,230),(50,200),(255,355),(70,100)]
 # print "Frame 61"
+# print gray.shape
+
+# ### Image vis005
+# water_locations = [(1,174)]
+# print "Imagem 5"
+# print gray.shape
+
+# ### Image vis006
+# water_locations = [(120,170),(50,20),(50,250)]
+# print "Imagem 6"
 # print gray.shape
 
 water_patches = []
@@ -59,8 +74,12 @@ ys = []
 zs = []
 for patch in (water_patches):
     glcm = greycomatrix(patch, [1], [0, np.pi/2, np.pi, 3*np.pi/2], symmetric=True, normed=True)
-    zs.append(greycoprops(glcm, 'contrast')[0, 0])
-    
+    # zs.append(greycoprops(glcm, 'contrast')[0, 0])
+    # zs.append(greycoprops(glcm, 'energy')[0, 0])
+    # zs.append(greycoprops(glcm, 'correlation')[0, 0])
+    # zs.append(greycoprops(glcm, 'dissimilarity')[0, 0])
+    zs.append(greycoprops(glcm, 'ASM')[0, 0])
+
     media = np.mean(patch)
     desvio_padrao = np.std(patch)
     desvio_padrao_a = np.std(patch)

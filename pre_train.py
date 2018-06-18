@@ -99,7 +99,7 @@ def reconstruct_GT_aux(ground_truth,window):
 
 	for i in range(len(ground_truth)):
 
-		if(ground_truth[i] == 3):
+		if(ground_truth[i] == 1):
 
 			zeros[i] = window[i]
 			# zeros[i] = np.array([[255]*window[i].shape[1]]*window[i].shape[0])
@@ -236,12 +236,30 @@ def groundtruth(window):
 	groundtruth = np.zeros(len(window))
 
 	#Imagem vis003
+	# for i in range(len(window)):
+	# 	if(0 <= i < 106 or 107 <= i < 110 or 112 <= i < 136 or 137 <= i < 139 or 141 <= i < 165 or 169 <= i < 193 or 198 <= i < 221 or 226 <= i < 249 or 253 <= i < 278 or i >= 281):
+	# 		groundtruth[i] = 1
+	# 	elif(i == 106 or 110 <= i < 112 or i == 136 or 139 <= i < 141 or 165 <= i < 169 or 193 <= i < 198 or 221 <= i < 226 or 249 <= i < 253 or 280 <= i < 281):
+	# 		groundtruth[i] = 3
+	# 	elif(278 <= i < 280):
+	# 		groundtruth[i] = 2
+
+	#Imagem vis004
+	# for i in range(len(window)):
+	# 	if(0 <= i < 64 or 66 <= i < 75 or 76 <= i < 84 or 85 <= i < 102 or 103 <= i < 105 or 106 <= i < 134 or 135 <= i < 166 or 167 <= i < 176 or 177 <= i < 184 or 185 <= i < 221 or 222 <= i < 235 or 236 <= i < 283 or 285 <= i < 301 or 302 <= i < 313 or 315 <= i < 326 or 327 <= i < 343 or 344 <= i < 361 or 362 <= i < 391 or 392 <= i < 413 or 414 <= i < 424 or 425 <= i < 431 or 432 <= i < 453 or 454 <= i < 492 or i >= 493):
+	# 		groundtruth[i] = 1
+	# 	elif(64 <= i < 66 or i == 75 or i == 84 or i == 102 or i == 105 or i == 134 or i == 166 or i == 176 or i == 184 or i == 221 or i == 235 or i == 301 or i == 326 or i == 343 or i == 361 or i == 391 or i == 413 or i == 424 or i == 431 or i == 453 or i == 492):
+	# 		groundtruth[i] = 3
+	# 	elif(283 <= i < 285 or 313 <= i < 315):
+	# 		groundtruth[i] = 2
+
+	#Imagem vis005
 	for i in range(len(window)):
-		if(0 <= i < 106 or 107 <= i < 110 or 112 <= i < 136 or 137 <= i < 139 or 141 <= i < 165 or 169 <= i < 193 or 198 <= i < 221 or 226 <= i < 249 or 253 <= i < 278 or i >= 281):
+		if(0 <= i < 12 or 18 <= i < 38 or 50 <= i < 67 or 81 <= i < 96 or 112 <= i < 125 or 141 <= i < 155 or 173 <= i < 185 or 203 <= i < 214 or 234 <= i < 244 or 264 <= i < 266 or 267 <= i < 273 or 293 <= i < 303 or 324 <= i < 333 or 355 <= i < 364 or 385 <= i < 394 or 415 <= i < 424 or 444 <= i < 453 or 473 <= i < 485 or i >= 503):
 			groundtruth[i] = 1
-		elif(110 <= i < 112 or i == 136 or 139 <= i < 141 or 165 <= i < 169 or 193 <= i < 198 or 221 <= i < 226 or 249 <= i < 253 or 280 <= i < 281):
-			groundtruth[i] = 3
-		elif(278 <= i < 280):
+		elif(12 <= i < 18 or 38 <= i < 50 or 67 <= i < 81 or 96 <= i < 112 or 125 <= i < 141 or 155 <= i < 173 or 185 <= i < 203 or 214 <= i < 234 or 244 <= i < 264 or 273 <= i < 293 or 303 <= i < 324 or 333 <= i < 355 or 364 <= i < 385 or 394 <= i < 415 or 424 <= i < 444 or 453 <= i < 473 or 485 <= i < 503):
+			groundtruth[i] = 4
+		elif(i == 266):
 			groundtruth[i] = 2
 
 	return groundtruth
@@ -250,7 +268,7 @@ if __name__=="__main__":
 
 	plt.clf()
 
-	img = cv.imread("images/seagull_database_vis003_small.png")
+	img = cv.imread("images/seagull_database_vis005_small.png")
 
 
 	res = cv.resize(img,None,fx=0.5, fy=0.5, interpolation = cv.INTER_CUBIC)
