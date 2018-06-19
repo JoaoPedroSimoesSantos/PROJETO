@@ -17,7 +17,7 @@ from mpl_toolkits import mplot3d
 fig = plt.figure(figsize=(8, 8))
 PATCH_SIZE = 16
 
-img = cv.imread("images/seagull_database_vis001_small.png")
+img = cv.imread("images/Frame1200.jpg")
 # img = cv.imread("images/Frame61.jpg")
 
 res = cv.resize(img,None,fx=0.5, fy=0.5, interpolation = cv.INTER_CUBIC)
@@ -32,9 +32,9 @@ lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
 #
 # select some patches from water areas of the image
 
-###Imagem 1
-water_locations = [(10, 10),(200,200),(50,200),(110,220),(240,350),(110,200)]
-print "Imagem 1"
+# ###Imagem 1
+# water_locations = [(10, 10),(200,200),(50,200),(110,220),(240,350),(110,200)]
+# print "Imagem 1"
 
 # ### Imagem vis001_01
 # water_locations = [(110,225)]
@@ -60,10 +60,21 @@ print "Imagem 1"
 # print "Imagem 5"
 # print gray.shape
 
-# ### Image vis006
+### Image vis006
 # water_locations = [(120,170),(50,20),(50,250)]
 # print "Imagem 6"
 # print gray.shape
+
+# ###Frame 600
+# water_locations = [(220,270),(50,20),(50,250)]
+# print "Frame 600"
+# print gray.shape
+
+###Frame 1200
+water_locations = [(140,305),(335,300),(50,250)]
+print "Frame 1200"
+print gray.shape
+
 
 water_patches = []
 for loc in water_locations:
