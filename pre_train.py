@@ -268,7 +268,7 @@ if __name__=="__main__":
 
 	plt.clf()
 
-	img = cv.imread("images/seagull_database_vis005_small.png")
+	img = cv.imread("images/frame600.jpg")
 
 
 	res = cv.resize(img,None,fx=0.5, fy=0.5, interpolation = cv.INTER_CUBIC)
@@ -293,12 +293,13 @@ if __name__=="__main__":
 
 	# showimg("Original",res)
 
-	# #Mostrar os blocks:
-	# for i in range(len(window)):
-	# 	print i
-	# 	showimg("Blocks",resize(window[i],10,10))
-	# 	glcm = greycomatrix(window[i], [1], [0, np.pi/2, np.pi/4, 3*np.pi/4], symmetric=True, normed=True)
-	# 	print np.array([np.mean(window[i]),np.std(window[i]),greycoprops(glcm, 'contrast')[0, 0]])
+	#Mostrar os blocks:
+	print "Resolução Imagem",img.shape
+	for i in range(len(window)):
+		print i
+		showimg("Blocks",resize(window[i],10,10))
+		glcm = greycomatrix(window[i], [1], [0, np.pi/2, np.pi/4, 3*np.pi/4], symmetric=True, normed=True)
+		print np.array([np.mean(window[i]),np.std(window[i]),greycoprops(glcm, 'contrast')[0, 0]])
 
 	# show_features_3d(features)
 

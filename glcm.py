@@ -17,10 +17,10 @@ from mpl_toolkits import mplot3d
 fig = plt.figure(figsize=(8, 8))
 PATCH_SIZE = 16
 
-img = cv.imread("images/Frame1200.jpg")
+img = cv.imread("images/Frame600.jpg")
 # img = cv.imread("images/Frame61.jpg")
 
-res = cv.resize(img,None,fx=0.5, fy=0.5, interpolation = cv.INTER_CUBIC)
+res = cv.resize(img,None,fx=0.25, fy=0.25, interpolation = cv.INTER_CUBIC)
 # res = cv.resize(frame,None,fx=0.5, fy=0.5, interpolation = cv.INTER_CUBIC)
 # print "SHAPE", res.shape
 gray = cv.cvtColor(res,cv.COLOR_BGR2GRAY)
@@ -65,15 +65,17 @@ lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
 # print "Imagem 6"
 # print gray.shape
 
-# ###Frame 600
+###Frame 600
+water_locations = [(105,130),(25,10),(25,125)]
 # water_locations = [(220,270),(50,20),(50,250)]
-# print "Frame 600"
+# water_locations = [(440,540),(100,40),(100,500)]
+print "Frame 600"
 # print gray.shape
 
-###Frame 1200
-water_locations = [(140,305),(335,300),(50,250)]
-print "Frame 1200"
-print gray.shape
+# ###Frame 1200
+# water_locations = [(290,610),(335,300),(50,250)]
+# print "Frame 1200"
+# print gray.shape
 
 
 water_patches = []
@@ -106,7 +108,7 @@ print "Contraste",zs
 # display original image with locations of patches
 fig.subplots_adjust(bottom=0.125, left=0.065, top = 0.875, right=0.975)
 ax = fig.add_subplot(221)
-ax.imshow(res, cmap=plt.cm.gray, interpolation='nearest', vmin=0, vmax=255)
+ax.imshow(gray, cmap=plt.cm.gray, interpolation='nearest', vmin=0, vmax=255)
 for (y, x) in water_locations:
     ax.plot(x + PATCH_SIZE / 2, y + PATCH_SIZE / 2, "bs")
 ax.set_xlabel('Original Image')
