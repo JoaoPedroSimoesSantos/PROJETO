@@ -4,7 +4,7 @@ i = 0
 
 # Create a VideoCapture object and read from input file
 # If the input is the camera, pass 0 instead of the video file name
-cap = cv.VideoCapture('images/video_surf.mp4')
+cap = cv.VideoCapture('images/video_salvamento_aquatico.mp4')
  
 # Check if camera opened successfully
 if (cap.isOpened()== False): 
@@ -19,12 +19,12 @@ while(cap.isOpened()):
     i += 1
     print i
     # Display the resulting frame
-    if 3510 <= i < 3535:
+    if 4510 <= i < 4535:
       cv.imshow('Frame',cv.resize(frame,None,fx = 0.5,fy = 0.5))
-      # cv.imwrite("Frame" + str(i) + ".jpg",frame)
+      cv.imwrite("Frame" + str(i) + ".jpg",frame)
  
     # Press Q on keyboard to  exit
-    if cv.waitKey(25) & 0xFF == ord('q') or i == 3535:
+    if cv.waitKey(25) & 0xFF == ord('q') or i == 4535:
       break
  
   # Break the loop
