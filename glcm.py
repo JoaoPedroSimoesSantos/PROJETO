@@ -15,11 +15,11 @@ from skimage import data
 from mpl_toolkits import mplot3d
 
 fig = plt.figure(figsize=(8, 8))
-PATCH_SIZE = 16
+PATCH_SIZE = 8
 print "PATCH_SIZE", PATCH_SIZE
 
-img = cv.imread("images/Frame600.jpg")
-# img = cv.imread("images/Frame61.jpg")
+# img = cv.imread("images/seagull_database_vis001_small.png")
+img = cv.imread("images/Frame3731.jpg")
 
 res = cv.resize(img,None,fx=0.25, fy=0.25, interpolation = cv.INTER_CUBIC)
 print "Original", img.shape
@@ -37,7 +37,8 @@ lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
 # select some patches from water areas of the image
 
 # ###Imagem 1
-# water_locations = [(10, 10),(200,200),(50,200),(110,220),(240,350),(110,200)]
+# # water_locations = [(10, 10),(200,200),(50,200),(110,220),(240,350),(110,200)]
+# water_locations = [(5, 5),(100,100),(25,100),(50,110),(120,175),(50,95)]
 # print "Imagem 1"
 
 # ### Imagem vis001_01
@@ -69,16 +70,36 @@ lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
 # print "Imagem 6"
 # print gray.shape
 
-###Frame 600
-water_locations = [(105,130),(25,10),(25,125)]
+# ###Frame 600
+# # water_locations = [(105,130),(25,10),(25,125)]
 # water_locations = [(220,260),(40,20),(50,250)]
-# water_locations = [(440,540),(100,40),(100,500)]
-print "Frame 600"
-# print gray.shape
+# # water_locations = [(440,540),(100,40),(100,500)]
+# print "Frame 600"
+# # print gray.shape
 
 # ###Frame 1200
 # water_locations = [(290,610),(335,300),(50,250)]
 # print "Frame 1200"
+# print gray.shape
+
+# ### Frame 4518 salvamento
+# # water_locations = [(115,220),(35,150),(100,275)]
+# water_locations = [(230,440),(70,300),(200,550)]
+# print "Frame 4518"
+# print gray.shape
+
+## Frame 3731 salvamento
+# water_locations = [(180,300),(35,150),(100,275)]
+# water_locations = [(90,150),(50,380),(200,550)]
+water_locations = [(45,75),(25,170),(100,275)]
+print "Frame 3731"
+print gray.shape
+
+# ## Frame 4729 salvamento
+# # water_locations = [(180,300),(35,150),(100,275)]
+# # water_locations = [(80,90),(50,380),(200,550)]
+# water_locations = [(40,45),(25,170),(100,275)]
+# print "Frame 4729"
 # print gray.shape
 
 
@@ -91,6 +112,7 @@ ys = []
 zs = []
 for patch in (water_patches):
     glcm = greycomatrix(patch, [1], [0, np.pi/2, np.pi, 3*np.pi/2], symmetric=True, normed=True)
+    # print greycoprops(glcm, 'contrast')
     zs.append(greycoprops(glcm, 'contrast')[0, 0])
     # zs.append(greycoprops(glcm, 'energy')[0, 0])
     # zs.append(greycoprops(glcm, 'correlation')[0, 0])
@@ -104,6 +126,7 @@ for patch in (water_patches):
 
     xs.append(media)
     ys.append(desvio_padrao)
+
 
 print "Media",xs
 print "Desvio",ys
