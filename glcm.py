@@ -16,11 +16,15 @@ from mpl_toolkits import mplot3d
 
 fig = plt.figure(figsize=(8, 8))
 PATCH_SIZE = 16
+print "PATCH_SIZE", PATCH_SIZE
 
 img = cv.imread("images/Frame600.jpg")
 # img = cv.imread("images/Frame61.jpg")
 
 res = cv.resize(img,None,fx=0.25, fy=0.25, interpolation = cv.INTER_CUBIC)
+print "Original", img.shape
+print "Resized", res.shape
+print 
 # res = cv.resize(frame,None,fx=0.5, fy=0.5, interpolation = cv.INTER_CUBIC)
 # print "SHAPE", res.shape
 gray = cv.cvtColor(res,cv.COLOR_BGR2GRAY)
@@ -67,7 +71,7 @@ lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
 
 ###Frame 600
 water_locations = [(105,130),(25,10),(25,125)]
-# water_locations = [(220,270),(50,20),(50,250)]
+# water_locations = [(220,260),(40,20),(50,250)]
 # water_locations = [(440,540),(100,40),(100,500)]
 print "Frame 600"
 # print gray.shape
