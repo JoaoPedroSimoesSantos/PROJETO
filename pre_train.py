@@ -164,6 +164,20 @@ def show_features_3d_2(features,ground_truth):
 	ax.legend()
 	plt.show()
 
+def show_features_3d_3(features,ground_truth, new_features):
+
+	ax = plt.axes(projection='3d')
+	ax.scatter3D(features[ground_truth==3,0],features[ground_truth==3,1],features[ground_truth==3,2], color = 'yellow',marker = 's')
+	ax.scatter3D(features[ground_truth==2,0],features[ground_truth==2,1],features[ground_truth==2,2], color = 'green',marker = 's')
+	ax.scatter3D(features[ground_truth==1,0],features[ground_truth==1,1],features[ground_truth==1,2], color = 'blue',marker = 's')
+	ax.scatter3D(features[ground_truth==0,0],features[ground_truth==0,1],features[ground_truth==0,2], color = 'red', marker = 'o')
+	ax.scatter3D(new_features[ground_truth==2,0],new_features[ground_truth==2,1],new_features[ground_truth==2,2], color = 'black', marker = 'o')
+	ax.set_xlabel("Contraste")
+	ax.set_ylabel("Desvio")
+	ax.set_zlabel("Media")
+	ax.legend()
+	plt.show()
+
 def trans_class(groundtruth):
 
 	for i in range(len(groundtruth)):
@@ -270,22 +284,22 @@ def groundtruth(window):
 	# 		groundtruth[i] = 2
 
 	###Imagem vis005
-	for i in range(len(window)):
-		if(0 <= i < 12 or 18 <= i < 38 or 50 <= i < 67 or 81 <= i < 96 or 112 <= i < 125 or 141 <= i < 155 or 173 <= i < 185 or 203 <= i < 214 or 234 <= i < 244 or 264 <= i < 266 or 267 <= i < 273 or 293 <= i < 303 or 324 <= i < 333 or 355 <= i < 364 or 385 <= i < 394 or 415 <= i < 424 or 444 <= i < 453 or 473 <= i < 485 or i >= 503):
-			groundtruth[i] = 1
-		elif(12 <= i < 18 or 38 <= i < 50 or 67 <= i < 81 or 96 <= i < 112 or 125 <= i < 141 or 155 <= i < 173 or 185 <= i < 203 or 214 <= i < 234 or 244 <= i < 264 or 273 <= i < 293 or 303 <= i < 324 or 333 <= i < 355 or 364 <= i < 385 or 394 <= i < 415 or 424 <= i < 444 or 453 <= i < 473 or 485 <= i < 503):
-			groundtruth[i] = 4
-		elif(i == 266):
-			groundtruth[i] = 2
+	# for i in range(len(window)):
+	# 	if(0 <= i < 12 or 18 <= i < 38 or 50 <= i < 67 or 81 <= i < 96 or 112 <= i < 125 or 141 <= i < 155 or 173 <= i < 185 or 203 <= i < 214 or 234 <= i < 244 or 264 <= i < 266 or 267 <= i < 273 or 293 <= i < 303 or 324 <= i < 333 or 355 <= i < 364 or 385 <= i < 394 or 415 <= i < 424 or 444 <= i < 453 or 473 <= i < 485 or i >= 503):
+	# 		groundtruth[i] = 1
+	# 	elif(12 <= i < 18 or 38 <= i < 50 or 67 <= i < 81 or 96 <= i < 112 or 125 <= i < 141 or 155 <= i < 173 or 185 <= i < 203 or 214 <= i < 234 or 244 <= i < 264 or 273 <= i < 293 or 303 <= i < 324 or 333 <= i < 355 or 364 <= i < 385 or 394 <= i < 415 or 424 <= i < 444 or 453 <= i < 473 or 485 <= i < 503):
+	# 		groundtruth[i] = 4
+	# 	elif(i == 266):
+	# 		groundtruth[i] = 2
 
 	# #Imagem 
-	# for i in range(len(window)):
-	# 	if(1 <= i < 5 or i == 6 or 12 <= i < 14 or 16 <= i < 18 or i == 20 or 23 <= i < 25 or 30 <= i < 32 or i == 33 or 41 <= i < 45 or i == 46 or i == 59 or i == 73 or 81 <= i < 84 or i == 86 or 100 <= i < 103 or 120 <= i < 124 or i == 133 or i == 152 or i == 160 or 162 <= i < 164 or i == 173 or i == 185 or i ==190 or i == 193 or i == 200 or i == 203 or i == 219 or i == 228 or i == 230 or 240 <= i < 244 or i == 270 or 280 <= i < 284 or i == 311 or i == 321 or 323 <= i < 325 or i == 393 or i == 395 or i == 398 or i == 417 or i == 426 or i == 433 or i == 435 or i == 437 or i == 450 or i == 457 or i == 466 or i == 473 or i == 492 or 509 <= i < 511 or i == 665 or i == 673 or i == 699 or 743 <= i < 745 or i == 816 or i == 820 or i == 855 or i == 895 or i == 905 or i == 913 or 935 <= i < 937 or i == 940 or i == 943):
-	# 		groundtruth[i] = 1
-	# 	elif(i == 0 or i == 5 or 7 <= i < 12 or 14 <= i < 16 or 18 <= i < 20 or 21 <= i < 23 or 25 <= i < 30 or i == 32 or 34 <= i < 41 or i == 45 or 47 <= i < 59 or 60 <= i < 73 or 74 <= i < 81 or 84 <= i < 86 or 87 <= i < 100 or 103 <= i < 120 or 124 <= i < 133 or 134 <= i < 152 or 153 <= i < 160 or i == 161 or 164 <= i < 173 or 174 <= i < 185 or 186 <= i < 190 or 191 <= i < 193  or 194 <= i < 200 or 201 <= i < 203 or 204 <= i < 219 or 220 <= i < 228 or i == 229 or 231 <= i < 240 or 244 <= i < 270 or 271 <= i < 280 or 284 <= i < 311 or 312 <= i < 321 or i == 322 or 325 <= i < 393 or i == 394 or 396 <= i < 398 or 399 <= i < 417 or 418 <= i < 426 or 427 <= i < 433 or i == 434 or i == 436 or 438 <= i < 450 or 451 <= i < 457 or 458 <= i < 466 or 467 <= i < 473 or 474 <= i < 492 or 493 <= i < 509 or 511 <= i < 537 or 538 <= i < 576 or 578 <= i < 616 or 618 <= i < 656 or 658 <= i < 665 or 666 <= i < 673 or 674 <= i < 699 or 700 <= i < 743 or 745 <= i < 816 or 817 <= i < 820 or 821 <= i < 855 or 856 <= i < 895 or 896 <= i < 905 or 906 <= i < 913 or 914 <= i < 935 or 937 <= i < 940 or 941 <= i < 943 or i >= 944):
-	# 		groundtruth[i] = 3
-	# 	elif(i == 537 or 576 <= i < 578 or 616 <= i < 618 or 656 <= i < 658):
-	# 		groundtruth[i] = 2
+	for i in range(len(window)):
+		if(1 <= i < 5 or i == 6 or 12 <= i < 14 or 16 <= i < 18 or i == 20 or 23 <= i < 25 or 30 <= i < 32 or i == 33 or 41 <= i < 45 or i == 46 or i == 59 or i == 73 or 81 <= i < 84 or i == 86 or 100 <= i < 103 or 120 <= i < 124 or i == 133 or i == 152 or i == 160 or 162 <= i < 164 or i == 173 or i == 185 or i ==190 or i == 193 or i == 200 or i == 203 or i == 219 or i == 228 or i == 230 or 240 <= i < 244 or i == 270 or 280 <= i < 284 or i == 311 or i == 321 or 323 <= i < 325 or i == 393 or i == 395 or i == 398 or i == 417 or i == 426 or i == 433 or i == 435 or i == 437 or i == 450 or i == 457 or i == 466 or i == 473 or i == 492 or 509 <= i < 511 or i == 665 or i == 673 or i == 699 or 743 <= i < 745 or i == 816 or i == 820 or i == 855 or i == 895 or i == 905 or i == 913 or 935 <= i < 937 or i == 940 or i == 943):
+			groundtruth[i] = 1
+		elif(i == 0 or i == 5 or 7 <= i < 12 or 14 <= i < 16 or 18 <= i < 20 or 21 <= i < 23 or 25 <= i < 30 or i == 32 or 34 <= i < 41 or i == 45 or 47 <= i < 59 or 60 <= i < 73 or 74 <= i < 81 or 84 <= i < 86 or 87 <= i < 100 or 103 <= i < 120 or 124 <= i < 133 or 134 <= i < 152 or 153 <= i < 160 or i == 161 or 164 <= i < 173 or 174 <= i < 185 or 186 <= i < 190 or 191 <= i < 193  or 194 <= i < 200 or 201 <= i < 203 or 204 <= i < 219 or 220 <= i < 228 or i == 229 or 231 <= i < 240 or 244 <= i < 270 or 271 <= i < 280 or 284 <= i < 311 or 312 <= i < 321 or i == 322 or 325 <= i < 393 or i == 394 or 396 <= i < 398 or 399 <= i < 417 or 418 <= i < 426 or 427 <= i < 433 or i == 434 or i == 436 or 438 <= i < 450 or 451 <= i < 457 or 458 <= i < 466 or 467 <= i < 473 or 474 <= i < 492 or 493 <= i < 509 or 511 <= i < 537 or 538 <= i < 576 or 578 <= i < 616 or 618 <= i < 656 or 658 <= i < 665 or 666 <= i < 673 or 674 <= i < 699 or 700 <= i < 743 or 745 <= i < 816 or 817 <= i < 820 or 821 <= i < 855 or 856 <= i < 895 or 896 <= i < 905 or 906 <= i < 913 or 914 <= i < 935 or 937 <= i < 940 or 941 <= i < 943 or i >= 944):
+			groundtruth[i] = 3
+		elif(i == 537 or 576 <= i < 578 or 616 <= i < 618 or 656 <= i < 658):
+			groundtruth[i] = 2
 
 	return groundtruth
 
@@ -293,7 +307,7 @@ if __name__=="__main__":
 
 	plt.clf()
 
-	img = cv.imread("images/seagull_database_vis019_small.png")
+	img = cv.imread("images/seagull_database_vis014_small.png")
 
 
 	res = cv.resize(img,None,fx=0.5, fy=0.5, interpolation = cv.INTER_CUBIC)
@@ -341,29 +355,33 @@ if __name__=="__main__":
 
 	# show_features_3d_2(features,ground_truth)
 
-	# feat = read_or_write_pickle("3features_train_ship.pickle",features,ground_truth,"Erro")
+	# feat = read_or_write_pickle("3_features_surf.pickle",features,ground_truth,"Erro")
 	# zeros = reconstruct_GT_aux(predi,window)
 	dic = read_file("3features_train_ship.pickle")
 	old_feat = dic["features"]
 	old_gt = dic["ground_truth"]
 
 	show_features_3d_2(old_feat,old_gt)
-	# print old_feat.shape
-	# print old_gt
+	# show_features_3d_3(old_feat,old_gt, features)
+	# # print old_feat.shape
+	# # print old_gt
 
-	classifier = SVC(kernel = 'linear')
+	classifier = SVC(kernel = 'linear', C = 1.0)
 	classi = classificator_train(classifier,old_feat,old_gt)
 	predi = classificator_test(classi,features)
 
-	# zeros = reconstruct_GT_aux(ground_truth,window)
+	print "Coef1", classi.coef_
+	print "Number of Support Vectors", classi.n_support_
+
+	# # # zeros = reconstruct_GT_aux(ground_truth,window)
 	zeros = reconstruct_GT_aux(predi,window)
 
 	image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
-	# contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+	# # # contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
-	# # # print "Antes",contours
-	# cv.drawContours(img, np.multiply(contours,2), -1, (0,0,255), 2)
-	# # # print "Depois",contours*2
+	# # # # # print "Antes",contours
+	# # # cv.drawContours(img, np.multiply(contours,2), -1, (0,0,255), 2)
+	# # # # # print "Depois",contours*2
 
 	cv.imshow("Imagem Reconstruida",image_reconstructed)
 	cv.waitKey(0)
