@@ -429,7 +429,7 @@ if __name__=="__main__":
 	print old_feat.shape
 	# # print old_gt
 
-	classifier = SVC(kernel = 'rbf', C = 50.0, gamma = 1.0)
+	classifier = SVC(kernel = 'rbf', C = 1.0)
 	classi = classificator_train(classifier,old_feat,old_gt)
 	predi = classificator_test(classi,features)
 
