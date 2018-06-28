@@ -396,13 +396,13 @@ if __name__=="__main__":
 
 	# showimg("Original",res)
 
-	#Mostrar os blocks:
-	# print "Resolução Imagem",img.shape
-	# for i in range(len(window)):
-	# 	print i
-	# 	showimg("Blocks",resize(window[i],10,10))
-	# 	glcm = greycomatrix(window[i], [1], [0, np.pi/2, np.pi/4, 3*np.pi/4], symmetric=True, normed=True)
-	# 	print np.array([np.mean(window[i]),np.std(window[i]),greycoprops(glcm, 'contrast')[0, 0]])
+	Mostrar os blocks:
+	print "Resolução Imagem",img.shape
+	for i in range(len(window)):
+		print i
+		showimg("Blocks",resize(window[i],10,10))
+		glcm = greycomatrix(window[i], [1], [0, np.pi/2, np.pi/4, 3*np.pi/4], symmetric=True, normed=True)
+		print np.array([np.mean(window[i]),np.std(window[i]),greycoprops(glcm, 'contrast')[0, 0]])
 
 	# show_features_3d(features)
 
@@ -412,7 +412,7 @@ if __name__=="__main__":
 	# print ground_truth
 	# show_features_3d_2(features,ground_truth)
 	
-	ground_truth = groundtruth(window)
+	# ground_truth = groundtruth(window)
 	# ground_truth = trans_class(ground_truth)
 	# # print ground_truth.shape
 
@@ -420,18 +420,18 @@ if __name__=="__main__":
 
 	# feat = read_or_write_pickle("3features_train_ship_3Classes.pickle",features,ground_truth,"Erro")
 	# zeros = reconstruct_GT_aux(predi,window)
-	dic = read_file("3features_train_ship_3Classes.pickle")
-	old_feat = dic["features"]
-	old_gt = dic["ground_truth"]
+	# dic = read_file("3features_train_ship_3Classes.pickle")
+	# old_feat = dic["features"]
+	# old_gt = dic["ground_truth"]
 
-	show_features_3d_2(old_feat,old_gt)
+	# show_features_3d_2(old_feat,old_gt)
 	# show_features_3d_3(old_feat,old_gt, features)
-	print old_feat.shape
+	# print old_feat.shape
 	# # print old_gt
 
-	classifier = SVC(kernel = 'rbf', C = 1.0)
-	classi = classificator_train(classifier,old_feat,old_gt)
-	predi = classificator_test(classi,features)
+	# classifier = SVC(kernel = 'rbf', C = 1.0)
+	# classi = classificator_train(classifier,old_feat,old_gt)
+	# predi = classificator_test(classi,features)
 
 	# process_video(cap,classi, size_block_video(cap)[0], size_block_video(cap)[1],2)
 	
@@ -440,15 +440,15 @@ if __name__=="__main__":
 	# print "Number of Support Vectors", classi.n_support_
 
 	# # # # zeros = reconstruct_GT_aux(ground_truth,window)
-	zeros = reconstruct_GT_aux(predi,window)
+	# zeros = reconstruct_GT_aux(predi,window)
 
-	image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
+	# image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
 	# # # # contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
-	# # # # # # print "Antes",contours
-	# # # # cv.drawContours(img, np.multiply(contours,2), -1, (0,0,255), 2)
-	# # # # # # print "Depois",contours*2
+	# # # print "Antes",contours
+	# cv.drawContours(img, np.multiply(contours,2), -1, (0,0,255), 2)
+	# # # print "Depois",contours*2
 
-	cv.imshow("Imagem Reconstruida",image_reconstructed)
-	cv.waitKey(0)
-	cv.destroyAllWindows()
+	# cv.imshow("Imagem Reconstruida",image_reconstructed)
+	# cv.waitKey(0)
+	# cv.destroyAllWindows()
