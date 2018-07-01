@@ -94,16 +94,34 @@ def features_filter(features,window,n_features):
 
 	return zeros,ground_truth
 
+def ground_truth_filter(features,window):
+
+	ground_truth = np.zeros(len(window))
+
+	for i in range(len(features)):
+
+		if(features[i][0] < 12 and features[i][1] < 8 and 120 < features[i][2] < 145):
+				
+				ground_truth[i] = 1
+		elif(features[i][0] > 150 and features[i][1] > 20 and features[i][2] < 140):
+				
+				ground_truth[i] = 2
+		elif(features[i][0] > 15 and features[i][1] > 15 and features[i][2] > 140):
+		
+			ground_truth[i] = 3
+
+	return ground_truth		
+
 def reconstruct_GT_aux(ground_truth,window):
 
 	zeros = np.zeros(window.shape)
 
 	for i in range(len(ground_truth)):
 
-		if(ground_truth[i] == 1):
+		if(ground_truth[i] == 3):
 
-			zeros[i] = window[i]
-			# zeros[i] = np.array([[255]*window[i].shape[1]]*window[i].shape[0])
+			# zeros[i] = window[i]
+			zeros[i] = np.array([[255]*window[i].shape[1]]*window[i].shape[0])
 			# print i
 
 	return zeros
@@ -279,8 +297,8 @@ def classificator_test(classificator,features):
 
 	return classificator.predict(features)
 
-def showimg(title, img, interpolation):
-	cv.imshow(title,img, interpolation = interpolation)
+def showimg(title, img):
+	cv.imshow(title,img)
 	cv.waitKey(0)
 	cv.destroyAllWindows()
 
@@ -309,14 +327,14 @@ def groundtruth(window):
 	# 	elif(283 <= i < 285 or 313 <= i < 315):
 	# 		groundtruth[i] = 2
 
-	##Imagem vis005
-	for i in range(len(window)):
-		if(0 <= i < 12 or 18 <= i < 38 or 50 <= i < 67 or 81 <= i < 96 or 112 <= i < 125 or 141 <= i < 155 or 173 <= i < 185 or 203 <= i < 214 or 234 <= i < 244 or 264 <= i < 266 or 267 <= i < 273 or 293 <= i < 303 or 324 <= i < 333 or 355 <= i < 364 or 385 <= i < 394 or 415 <= i < 424 or 444 <= i < 453 or 473 <= i < 485 or i >= 503):
-			groundtruth[i] = 1
-		elif(12 <= i < 18 or 38 <= i < 50 or 67 <= i < 81 or 96 <= i < 112 or 125 <= i < 141 or 155 <= i < 173 or 185 <= i < 203 or 214 <= i < 234 or 244 <= i < 264 or 273 <= i < 293 or 303 <= i < 324 or 333 <= i < 355 or 364 <= i < 385 or 394 <= i < 415 or 424 <= i < 444 or 453 <= i < 473 or 485 <= i < 503):
-			groundtruth[i] = 4
-		elif(i == 266):
-			groundtruth[i] = 2
+	# ##Imagem vis005
+	# for i in range(len(window)):
+	# 	if(0 <= i < 12 or 18 <= i < 38 or 50 <= i < 67 or 81 <= i < 96 or 112 <= i < 125 or 141 <= i < 155 or 173 <= i < 185 or 203 <= i < 214 or 234 <= i < 244 or 264 <= i < 266 or 267 <= i < 273 or 293 <= i < 303 or 324 <= i < 333 or 355 <= i < 364 or 385 <= i < 394 or 415 <= i < 424 or 444 <= i < 453 or 473 <= i < 485 or i >= 503):
+	# 		groundtruth[i] = 1
+	# 	elif(12 <= i < 18 or 38 <= i < 50 or 67 <= i < 81 or 96 <= i < 112 or 125 <= i < 141 or 155 <= i < 173 or 185 <= i < 203 or 214 <= i < 234 or 244 <= i < 264 or 273 <= i < 293 or 303 <= i < 324 or 333 <= i < 355 or 364 <= i < 385 or 394 <= i < 415 or 424 <= i < 444 or 453 <= i < 473 or 485 <= i < 503):
+	# 		groundtruth[i] = 4
+	# 	elif(i == 266):
+	# 		groundtruth[i] = 2
 
 	# # #Imagem 
 	# for i in range(len(window)):
@@ -326,6 +344,15 @@ def groundtruth(window):
 	# 		groundtruth[i] = 3
 	# 	elif(i == 537 or 576 <= i < 578 or 616 <= i < 618 or 656 <= i < 658):
 	# 		groundtruth[i] = 2
+
+	# #Frame 4514
+	for i in range(len(window)):
+		if(i == 0 or 2 <= i < 6 or 7 <= i < 13 or 14 <= i < 46 or 47 <= i < 54 or 55 <= i < 139 or 140 <= i < 179 or 180 <= i < 361 or 362 <= i < 389 or 390 <= i < 395 or 398 <= i < 430 or i == 433 or 438 <= i < 487 or 488 <= i < 548 or 549 <= i < 582 or 583 <= i < 595 or 596 <= i < 635 or 636 <= i < 672 or 674 <= i < 693 or 697 <= i < 708 or 709 <= i < 720 or 723 <= i < 726 or 728 <= i < 730 or 736 <= i < 739 or 740 <= i < 756 or 757 <= i < 760 or i == 764 or 783 <= i < 788 or i >= 797):
+			groundtruth[i] = 1
+		elif(i == 1 or i == 6 or i == 13 or i == 54 or i == 361 or i == 389 or 395 <= i < 398 or 430 <= i < 433 or 434 <= i < 438 or i == 487 or i == 582 or i == 595 or i == 635 or 672 <= i < 674 or 693 <= i < 696 or i == 708 or 720 <= i < 723 or 726 <= i < 728 or 730 <= i < 736 or i == 739 or i == 756 or 760 <= i < 764 or 765 <= i < 783 or 788 <= i < 797):
+			groundtruth[i] = 3
+		elif(i == 46 or i == 139 or i == 179 or i == 548):
+			groundtruth[i] = 2
 
 	return groundtruth
 
@@ -384,14 +411,12 @@ def input_label(window, res):
 	print "Dimensao dos blocos", window[0].shape
 	for i in range(len(window)):
 		print i
-		showimg("Block Original",resize(window[i],window[i].shape[0],window[i].shape[1]), "none")
+		showimg("Block Original",resize(window[i],window[i].shape[0],window[i].shape[1]))
 		
 		glcm = greycomatrix(window[i], [1], [0, np.pi/2, np.pi/4, 3*np.pi/4], symmetric=True, normed=True)
 		print "Media     Desvio      Contraste"
 		print np.array([np.mean(window[i]),np.std(window[i]),greycoprops(glcm, 'contrast')[0, 0]])
-
-		showimg("Block Interpolated",resize(window[i],window[i].shape[0],window[i].shape[1]), "nearest")
-
+  		
 		print "Label: "
 		label = input()
 		
@@ -430,10 +455,20 @@ if __name__=="__main__":
 	print "Nfeatures",features.shape
 	# print features[:,0]
 
+	# #Mostrar os blocks:
+	# print "Resolução Imagem",res.shape
+	# print "Dimensao dos blocos", window[0].shape
+	# for i in range(len(window)):
+	# 	print i
+	# 	showimg("Block Original",resize(window[i],window[i].shape[0],window[i].shape[1]))
+		
+	# 	glcm = greycomatrix(window[i], [1], [0, np.pi/2, np.pi/4, 3*np.pi/4], symmetric=True, normed=True)
+	# 	print "Media       Desvio        Contraste"
+	# 	print np.array([np.mean(window[i]),np.std(window[i]),greycoprops(glcm, 'contrast')[0, 0]])
 	# showimg("Original",res)
 
-	ground_truth = input_label(window,res)
-	write_ground("ground_truth_images.pickle","images/Frame4514.jpg",ground_truth)
+	# ground_truth = ground_truth_filter(features,window)
+	# write_ground("ground_truth_images.pickle","images/Frame4514.jpg",ground_truth)
 	# show_features_3d(features)
 
 	# zeros,ground_truth = features_filter(features,window,3)
@@ -442,7 +477,7 @@ if __name__=="__main__":
 	# print ground_truth
 	# show_features_3d_2(features,ground_truth)
 	
-	# ground_truth = groundtruth(window)
+	ground_truth = groundtruth(window)
 	# ground_truth = trans_class(ground_truth)
 	# # print ground_truth.shape
 
@@ -473,13 +508,13 @@ if __name__=="__main__":
 	# zeros = reconstruct_GT_aux(predi,window)
 
 	image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
-	# # # # contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+	contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
-	# # # print "Antes",contours
-	# cv.drawContours(img, np.multiply(contours,2), -1, (0,0,255), 2)
-	# # # print "Depois",contours*2
+	# # print "Antes",contours
+	cv.drawContours(img, np.multiply(contours,4), -1, (0,0,255), 2)
+	# # print "Depois",contours*2
 
-	cv.imshow("Imagem Reconstruida",image_reconstructed)
+	cv.imshow("Imagem Reconstruida",img)
 	cv.waitKey(0)
 	cv.destroyAllWindows()
 
