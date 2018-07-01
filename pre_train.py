@@ -384,10 +384,13 @@ def input_label(window, res):
 	print "Dimensao dos blocos", window[0].shape
 	for i in range(len(window)):
 		print i
-		showimg("Blocks",resize(window[i],window[i].shape[0],window[i].shape[1]))
+		showimg("Block Original",resize(window[i],window[i].shape[0],window[i].shape[1]))
+		
 		glcm = greycomatrix(window[i], [1], [0, np.pi/2, np.pi/4, 3*np.pi/4], symmetric=True, normed=True)
 		print "Media     Desvio      Contraste"
 		print np.array([np.mean(window[i]),np.std(window[i]),greycoprops(glcm, 'contrast')[0, 0]])
+
+		showimg("Block Interpolated",resize(window[i],window[i].shape[0],window[i].shape[1]), interpolation = "nearest")
 
 		print "Label: "
 		label = input()
