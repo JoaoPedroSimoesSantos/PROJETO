@@ -200,7 +200,7 @@ def size_block_video(video):
 
 	r = 0
 	c = 0
-	dimensoes = [14,15,16]
+	dimensoes = [7,8,9]
 
 	r = [dimensao for dimensao in dimensoes if frame_height%dimensao == 0]	
 	c = [dimensao for dimensao in dimensoes if frame_width%dimensao == 0]	
@@ -216,7 +216,7 @@ def size_block(img):
 
 	r = 0
 	c = 0
-	dimensoes = [14,15,16]
+	dimensoes = [7,8,9]
 
 	r = [dimensao for dimensao in dimensoes if img_height%dimensao == 0]	
 	c = [dimensao for dimensao in dimensoes if img_width%dimensao == 0]	
@@ -231,6 +231,15 @@ def read_file(path):
 	file_read.close()
 
 	return example_dict
+
+def write_ground(path,name,ground_truth):
+
+	file = open(path,"wb")
+	dic = {name:ground_truth}
+	pickle.dump(dic,file)
+	file.close()
+
+	return "Criou"
 
 def write_file(path,features,ground_truth):
 
@@ -364,16 +373,40 @@ def process_video(video,classi, windowsize_r, windowsize_c, fator):
 	video.release()
 	cv.destroyAllWindows()
 
+
+def input_label(window, res):
+
+	groundtruth = np.ones(len(window))
+
+	
+	#Mostrar os blocks:
+	print "Resolução Imagem",res.shape
+	print "Dimensao dos blocos", window[0].shape
+	for i in range(len(window)):
+		print i
+		showimg("Blocks",resize(window[i],window[i].shape[0],window[i].shape[1]))
+		glcm = greycomatrix(window[i], [1], [0, np.pi/2, np.pi/4, 3*np.pi/4], symmetric=True, normed=True)
+		print "Media     Desvio      Contraste"
+		print np.array([np.mean(window[i]),np.std(window[i]),greycoprops(glcm, 'contrast')[0, 0]])
+
+		print "Label: "
+		label = input()
+		print "Label: ", label
+		groundtruth[i] = label
+
+	return groundtruth
+
+
 if __name__=="__main__":
 
 	plt.clf()
 
 	# cap = cv.VideoCapture('images/video1.mp4')
 
-	img = cv.imread("images/seagull_database_vis002_small.png")
+	# img = cv.imread("images/seagull_database_vis002_small.png")
+	img = cv.imread("images/Frame4514.jpg")
 
-
-	res = cv.resize(img,None,fx=0.5, fy=0.5, interpolation = cv.INTER_CUBIC)
+	res = cv.resize(img,None,fx=0.25, fy=0.25, interpolation = cv.INTER_CUBIC)
 	
 
 	gray = cv.cvtColor(res,cv.COLOR_BGR2GRAY)
@@ -396,14 +429,8 @@ if __name__=="__main__":
 
 	# showimg("Original",res)
 
-	Mostrar os blocks:
-	print "Resolução Imagem",img.shape
-	for i in range(len(window)):
-		print i
-		showimg("Blocks",resize(window[i],10,10))
-		glcm = greycomatrix(window[i], [1], [0, np.pi/2, np.pi/4, 3*np.pi/4], symmetric=True, normed=True)
-		print np.array([np.mean(window[i]),np.std(window[i]),greycoprops(glcm, 'contrast')[0, 0]])
-
+	ground_truth = input_label(window,res)
+	write_ground("ground_truth_images.pickle","images/Frame4514.jpg",ground_truth)
 	# show_features_3d(features)
 
 	# zeros,ground_truth = features_filter(features,window,3)
@@ -416,7 +443,7 @@ if __name__=="__main__":
 	# ground_truth = trans_class(ground_truth)
 	# # print ground_truth.shape
 
-	# show_features_3d_2(features,ground_truth)
+	show_features_3d_2(features,ground_truth)
 
 	# feat = read_or_write_pickle("3features_train_ship_3Classes.pickle",features,ground_truth,"Erro")
 	# zeros = reconstruct_GT_aux(predi,window)
@@ -439,16 +466,17 @@ if __name__=="__main__":
 	# print "Coef1", classi.coef_
 	# print "Number of Support Vectors", classi.n_support_
 
-	# # # # zeros = reconstruct_GT_aux(ground_truth,window)
+	zeros = reconstruct_GT_aux(ground_truth,window)
 	# zeros = reconstruct_GT_aux(predi,window)
 
-	# image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
+	image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
 	# # # # contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
 	# # # print "Antes",contours
 	# cv.drawContours(img, np.multiply(contours,2), -1, (0,0,255), 2)
 	# # # print "Depois",contours*2
 
-	# cv.imshow("Imagem Reconstruida",image_reconstructed)
-	# cv.waitKey(0)
-	# cv.destroyAllWindows()
+	cv.imshow("Imagem Reconstruida",image_reconstructed)
+	cv.waitKey(0)
+	cv.destroyAllWindows()
+
