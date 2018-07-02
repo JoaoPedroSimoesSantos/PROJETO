@@ -112,17 +112,18 @@ def ground_truth_filter(features,window):
 
 	return ground_truth		
 
-def reconstruct_GT_aux(ground_truth,window):
+def reconstruct_GT_aux(ground_truth,window,features):
 
 	zeros = np.zeros(window.shape)
 
 	for i in range(len(ground_truth)):
 
-		if(ground_truth[i] == 3):
+		if(ground_truth[i] == 1): #and features[i,0] > 290):
 
 			# zeros[i] = window[i]
 			zeros[i] = np.array([[255]*window[i].shape[1]]*window[i].shape[0])
 			# print i
+			print "Contraste",features[i,0]
 
 	return zeros
 
@@ -189,7 +190,7 @@ def show_features_3d_3(features,ground_truth, new_features):
 	ax.scatter3D(features[ground_truth==2,0],features[ground_truth==2,1],features[ground_truth==2,2], color = 'green',marker = 's')
 	ax.scatter3D(features[ground_truth==1,0],features[ground_truth==1,1],features[ground_truth==1,2], color = 'blue',marker = 's')
 	ax.scatter3D(features[ground_truth==0,0],features[ground_truth==0,1],features[ground_truth==0,2], color = 'red', marker = 'o')
-	ax.scatter3D(new_features[ground_truth==2,0],new_features[ground_truth==2,1],new_features[ground_truth==2,2], color = 'black', marker = 'o')
+	ax.scatter3D(new_features[:,0],new_features[:,1],new_features[:,2], color = 'black', marker = 'o')
 	ax.set_xlabel("Contraste")
 	ax.set_ylabel("Desvio")
 	ax.set_zlabel("Media")
@@ -200,7 +201,7 @@ def trans_class(groundtruth):
 
 	for i in range(len(groundtruth)):
 
-		if(groundtruth[i] == 0 or groundtruth[i] == 1):
+		if(groundtruth[i] == 0 or groundtruth[i] == 1 or groundtruth[i] == 3):
 
 			groundtruth[i] = 0
 
@@ -242,50 +243,56 @@ def size_block(img):
 
 	return r[-1],c[-1]
 
+
+def train_pickle(path_img,features_p,ground_truth_p, pickle):
+
+	if os.path.isfile(pickle):
+		
+		dic1 = read_file(features_p)
+		dic2 = read_file(ground_truth_p)
+		feat = dic1[path_img]
+		gt = dic2[path_img]
+
+		train_dic = read_file(pickle)
+		if(len(train_dic["ground_truth"])==0):
+			train_dic["ground_truth"] = gt
+			train_dic["features"] = feat
+		else:
+			train_dic["ground_truth"] = np.hstack((train_dic["ground_truth"],gt))
+			train_dic["features"] = np.vstack((train_dic["features"],feat))
+
+		# gt = np.reshape(gt,(gt.shape[1],gt.shape[0]))
+		write_file(pickle,train_dic)
+
+		return "Juntou"
+
+	return "Nao Juntou"
+
 def read_file(path):
+	file = open(path,"rb")
+	dic = pickle.load(file)
+	file.close()
 
-	file_read = open(path,"rb")
-	example_dict = pickle.load(file_read)
-	file_read.close()
+	return dic
 
-	return example_dict
-
-def write_ground(path,name,ground_truth):
-
+def write_file(path,dic):
 	file = open(path,"wb")
-	dic = {name:ground_truth}
 	pickle.dump(dic,file)
 	file.close()
 
-	return "Criou"
-
-def write_file(path,features,ground_truth):
-
-	file = open(path,"wb")
-	dic = {"features":features,"ground_truth":ground_truth}
-	pickle.dump(dic,file)
-	file.close()
-
-	return "Criou"
-
-def read_or_write_pickle(path,new_features,new_ground_truth,default):
+def update_pickle(path,namefig,features):
 
 	if os.path.isfile(path):
 		
 		dic = read_file(path)
-		feat = dic["features"]
-		gt = dic["ground_truth"]
 
-		feat = np.vstack((feat,new_features))
-		gt = np.hstack((gt,new_ground_truth))
-		# gt = np.reshape(gt,(gt.shape[1],gt.shape[0]))
-		write_file(path,feat,gt)
+		dic[namefig] = features
+
+		write_file(path,dic)
 
 		return "Juntou"
 	else:
-		return write_file(path,new_features,new_ground_truth)
-
-	return default
+		return "Nao Juntou"
 
 def classificator_train(classificator,features,ground_truth):
 	
@@ -345,23 +352,34 @@ def groundtruth(window):
 	# 	elif(i == 537 or 576 <= i < 578 or 616 <= i < 618 or 656 <= i < 658):
 	# 		groundtruth[i] = 2
 
-	# #Frame 4514
+	# # #Frame 4514
+	# for i in range(len(window)):
+	# 	if(i == 0 or 2 <= i < 6 or 7 <= i < 13 or 14 <= i < 46 or 47 <= i < 54 or 55 <= i < 139 or 140 <= i < 361 or 362 <= i < 389 or 390 <= i < 395 or 398 <= i < 430 or i == 433 or 438 <= i < 487 or 488 <= i < 548 or 549 <= i < 582 or 583 <= i < 595 or 596 <= i < 635 or 636 <= i < 672 or 674 <= i < 693 or 697 <= i < 708 or 709 <= i < 720 or 723 <= i < 726 or 728 <= i < 730 or 736 <= i < 739 or 740 <= i < 756 or 757 <= i < 760 or i == 764 or 783 <= i < 788 or i >= 797):
+	# 		groundtruth[i] = 1
+	# 	elif(i == 1 or i == 6 or i == 13 or i == 54 or i == 361 or i == 389 or 395 <= i < 398 or 430 <= i < 433 or 434 <= i < 438 or i == 487 or i == 582 or i == 595 or i == 635 or 672 <= i < 674 or 693 <= i < 696 or i == 708 or 720 <= i < 723 or 726 <= i < 728 or 730 <= i < 736 or i == 739 or i == 756 or 760 <= i < 764 or 765 <= i < 783 or 788 <= i < 797):
+	# 		groundtruth[i] = 3
+	# 	elif(i == 46 or i == 139 or i == 548):
+	# 		groundtruth[i] = 2
+
+	# #Frame 3731
 	for i in range(len(window)):
-		if(i == 0 or 2 <= i < 6 or 7 <= i < 13 or 14 <= i < 46 or 47 <= i < 54 or 55 <= i < 139 or 140 <= i < 179 or 180 <= i < 361 or 362 <= i < 389 or 390 <= i < 395 or 398 <= i < 430 or i == 433 or 438 <= i < 487 or 488 <= i < 548 or 549 <= i < 582 or 583 <= i < 595 or 596 <= i < 635 or 636 <= i < 672 or 674 <= i < 693 or 697 <= i < 708 or 709 <= i < 720 or 723 <= i < 726 or 728 <= i < 730 or 736 <= i < 739 or 740 <= i < 756 or 757 <= i < 760 or i == 764 or 783 <= i < 788 or i >= 797):
+		if(0 <= i < 45 ):
 			groundtruth[i] = 1
-		elif(i == 1 or i == 6 or i == 13 or i == 54 or i == 361 or i == 389 or 395 <= i < 398 or 430 <= i < 433 or 434 <= i < 438 or i == 487 or i == 582 or i == 595 or i == 635 or 672 <= i < 674 or 693 <= i < 696 or i == 708 or 720 <= i < 723 or 726 <= i < 728 or 730 <= i < 736 or i == 739 or i == 756 or 760 <= i < 764 or 765 <= i < 783 or 788 <= i < 797):
+		elif():
 			groundtruth[i] = 3
-		elif(i == 46 or i == 139 or i == 179 or i == 548):
+		elif( 45 <=i < 46):
 			groundtruth[i] = 2
 
 	return groundtruth
 
 def process_video(video,classi, windowsize_r, windowsize_c, fator):
 
+	idx = 0
 	while(video.isOpened()):
 
 		ret, frame = video.read()
-		print ret
+		idx+=1
+		print "Frame ", idx
 		res = cv.resize(frame,None,fx=1./fator, fy=1./fator, interpolation = cv.INTER_CUBIC)
 
 		gray = cv.cvtColor(res,cv.COLOR_BGR2GRAY)
@@ -381,9 +399,9 @@ def process_video(video,classi, windowsize_r, windowsize_c, fator):
 
 		
 		predi = classificator_test(classi,features)
+		# print predi[predi==1]
 		
-		
-		zeros = reconstruct_GT_aux(predi,window)
+		zeros = reconstruct_GT_aux(predi,window,features)
 		# zeros = reconstruct_GT_aux(ground_truth,window)
 
 		image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
@@ -429,12 +447,22 @@ if __name__=="__main__":
 
 	plt.clf()
 
-	# cap = cv.VideoCapture('images/video1.mp4')
+	# cap = cv.VideoCapture('images/video_salvamento_aquatico.mp4')
+
+	# dic = read_file("train_pickle.p")
+	# old_feat = dic["features"]
+	# old_gt = dic["ground_truth"]
+
+	# classifier = SVC(kernel = 'linear', C = 1.0)
+	# classi = classificator_train(classifier,old_feat,old_gt)
+
+	# process_video(cap,classi, size_block_video(cap)[0], size_block_video(cap)[1],4)
 
 	# img = cv.imread("images/seagull_database_vis002_small.png")
-	img = cv.imread("images/Frame4514.jpg")
+	path_img = "images/Frame3731.jpg"
+	img = cv.imread(path_img)
 
-	res = cv.resize(img,None,fx=0.25, fy=0.25, interpolation = cv.INTER_CUBIC)
+	res = cv.resize(img,None,fx=0.125, fy=0.125, interpolation = cv.INTER_CUBIC)
 	
 
 	gray = cv.cvtColor(res,cv.COLOR_BGR2GRAY)
@@ -452,19 +480,19 @@ if __name__=="__main__":
 	window_3 = blocos_16_16(lab[:,:,2],windowsize_r,windowsize_c)
 
 	features = features_extraction(window,window_2,window_3,3)
-	print "Nfeatures",features.shape
+	# print "Nfeatures",features.shape
 	# print features[:,0]
 
-	# #Mostrar os blocks:
-	# print "Resolução Imagem",res.shape
-	# print "Dimensao dos blocos", window[0].shape
-	# for i in range(len(window)):
-	# 	print i
-	# 	showimg("Block Original",resize(window[i],window[i].shape[0],window[i].shape[1]))
+	#Mostrar os blocks:
+	print "Resolução Imagem",res.shape
+	print "Dimensao dos blocos", window[0].shape
+	for i in range(len(window)):
+		print i
+		showimg("Block Original",resize(window[i],window[i].shape[0],window[i].shape[1]))
 		
-	# 	glcm = greycomatrix(window[i], [1], [0, np.pi/2, np.pi/4, 3*np.pi/4], symmetric=True, normed=True)
-	# 	print "Media       Desvio        Contraste"
-	# 	print np.array([np.mean(window[i]),np.std(window[i]),greycoprops(glcm, 'contrast')[0, 0]])
+		glcm = greycomatrix(window[i], [1], [0, np.pi/2, np.pi/4, 3*np.pi/4], symmetric=True, normed=True)
+		print "Media       Desvio        Contraste"
+		print np.array([np.mean(window[i]),np.std(window[i]),greycoprops(glcm, 'contrast')[0, 0]])
 	# showimg("Original",res)
 
 	# ground_truth = ground_truth_filter(features,window)
@@ -477,15 +505,31 @@ if __name__=="__main__":
 	# print ground_truth
 	# show_features_3d_2(features,ground_truth)
 	
-	ground_truth = groundtruth(window)
+	# ground_truth = groundtruth(window)
 	# ground_truth = trans_class(ground_truth)
 	# # print ground_truth.shape
 
-	show_features_3d_2(features,ground_truth)
+	# show_features_3d_2(features,ground_truth)
+	# train_pickle(path_img,"features.p","ground_truth.p","train_pickle.p")
+
+	# write_file("train_pickle.p",dict(ground_truth=[],features=[]))
+	# write_file("ground_truth.p",dict())
+	# dic = read_file("train_pickle.p")
+	# print dic["features"].shape
+	# print dic
+
+	# update_pickle("ground_truth.p",path_img,ground_truth)
+	# dic = read_file("features.p")
+	# print dic.keys()
+	# print dic
+	# update_pickle("features.p",path_img,features)
+	# dic = read_file("train_pickle.p")
+
+	# show_features_3d_2(features,ground_truth)
 
 	# feat = read_or_write_pickle("3features_train_ship_3Classes.pickle",features,ground_truth,"Erro")
 	# zeros = reconstruct_GT_aux(predi,window)
-	# dic = read_file("3features_train_ship_3Classes.pickle")
+	# dic = read_file("train_pickle.p")
 	# old_feat = dic["features"]
 	# old_gt = dic["ground_truth"]
 
@@ -494,27 +538,27 @@ if __name__=="__main__":
 	# print old_feat.shape
 	# # print old_gt
 
-	# classifier = SVC(kernel = 'rbf', C = 1.0)
+	# classifier = SVC(kernel = 'linear', C = 1.0)
 	# classi = classificator_train(classifier,old_feat,old_gt)
 	# predi = classificator_test(classi,features)
 
-	# process_video(cap,classi, size_block_video(cap)[0], size_block_video(cap)[1],2)
+	# process_video(cap,classi, size_block_video(cap)[0], size_block_video(cap)[1],4)
 	
 
 	# print "Coef1", classi.coef_
-	# print "Number of Support Vectors", classi.n_support_
+	# print "Number of Support Vectors", classi.support_vectors_
 
-	zeros = reconstruct_GT_aux(ground_truth,window)
-	# zeros = reconstruct_GT_aux(predi,window)
+	# zeros = reconstruct_GT_aux(ground_truth,window, features)
+	# zeros = reconstruct_GT_aux(predi,window, features)
 
-	image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
-	contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+	# image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
+	# contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
-	# # print "Antes",contours
-	cv.drawContours(img, np.multiply(contours,4), -1, (0,0,255), 2)
-	# # print "Depois",contours*2
+	# # # print "Antes",contours
+	# cv.drawContours(img, np.multiply(contours,8), -1, (0,0,255), 2)
+	# # # print "Depois",contours*2
 
-	cv.imshow("Imagem Reconstruida",img)
-	cv.waitKey(0)
-	cv.destroyAllWindows()
+	# cv.imshow("Imagem Reconstruida",img)
+	# cv.waitKey(0)
+	# cv.destroyAllWindows()
 
