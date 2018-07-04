@@ -19,7 +19,7 @@ PATCH_SIZE = 8
 print "PATCH_SIZE", PATCH_SIZE
 
 # img = cv.imread("images/seagull_database_vis001_small.png")
-img = cv.imread("images/Frame3731.jpg")
+img = cv.imread("images/Frame121.jpg")
 
 res = cv.resize(img,None,fx=0.125, fy=0.125, interpolation = cv.INTER_CUBIC)
 print "Original", img.shape
@@ -88,13 +88,13 @@ lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
 # print "Frame 4518"
 # print gray.shape
 
-## Frame 3731 salvamento
-# water_locations = [(90,150),(50,380),(200,550)]
-# water_locations = [(45,75),(25,170),(100,275)]
-water_locations = [(20,32),(10,80),(50,130)]
-# water_locations = [(8,15),(5,40),(25,60)]
-print "Frame 3731"
-print gray.shape
+# ## Frame 3731 salvamento
+# # water_locations = [(90,150),(50,380),(200,550)]
+# # water_locations = [(45,75),(25,170),(100,275)]
+# water_locations = [(20,32),(10,80),(50,130)]
+# # water_locations = [(8,15),(5,40),(25,60)]
+# print "Frame 3731"
+# print gray.shape
 
 # ## Frame 3580 salvamento
 # # water_locations = [(85,220),(250,300),(100,275)]
@@ -121,18 +121,25 @@ print gray.shape
 
 # ## Frame 4514 salvamento
 # # water_locations = [(65,305),(145,340),(180,560)]
-# # water_locations = [(30,150),(70,170),(90,280)]
-# water_locations = [(12,70),(35,80),(45,140)]
+# water_locations = [(34,154),(70,170),(90,280)]
+# # water_locations = [(10,50),(70,170),(90,280)]
+# # water_locations = [(12,75),(35,80),(45,140)]
 # print "Frame 4514"
 # print gray.shape
 
 # ## Frame 1 salvamento
 # # water_locations = [(90,150),(50,380),(200,550)]
 # # water_locations = [(45,75),(25,170),(100,275)]
-# water_locations = [(0,35),(10,80),(110,180)]
-# # water_locations = [(8,15),(5,40),(25,60)]
+# water_locations = [(0,35),(10,80),(114,184)]
+# # water_locations = [(8,15),(5,40),(55,90)]
 # print "Frame 1"
 # print gray.shape
+
+## Frame 121 salvamento
+# water_locations = [(0,35),(80,250),(140,60)]
+water_locations = [(0,35),(38,120),(65,25)]
+print "Frame 1"
+print gray.shape
 
 
 water_patches = []
@@ -143,7 +150,7 @@ xs = []
 ys = []
 zs = []
 for patch in (water_patches):
-    glcm = greycomatrix(patch, [1], [0, np.pi/2, np.pi, 3*np.pi/2], symmetric=True, normed=True)
+    glcm = greycomatrix(patch, [1], [3*np.pi/4], symmetric=True, normed=True)
     # print greycoprops(glcm, 'contrast')
     zs.append(greycoprops(glcm, 'contrast')[0, 0])
     # zs.append(greycoprops(glcm, 'energy')[0, 0])
