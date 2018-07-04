@@ -361,14 +361,23 @@ def groundtruth(window):
 	# 	elif(i == 46 or i == 139 or i == 548):
 	# 		groundtruth[i] = 2
 
+	# # #Frame 3597
+	# for i in range(len(window)):
+	# 		groundtruth[i] = 1
+	# 	elif(i == 26 or i == 90):
+	# 		groundtruth[i] = 2
+	# 	else:
+	# 		groundtruth[i] = 3
+
+
 	# #Frame 3731
-	for i in range(len(window)):
-		if(0 <= i < 45 ):
-			groundtruth[i] = 1
-		elif():
-			groundtruth[i] = 3
-		elif( 45 <=i < 46):
-			groundtruth[i] = 2
+	# for i in range(len(window)):
+	# 	if(0 <= i < 45 ):
+	# 		groundtruth[i] = 1
+	# 	elif():
+	# 		groundtruth[i] = 3
+	# 	elif( 45 <=i < 46):
+	# 		groundtruth[i] = 2
 
 	return groundtruth
 
