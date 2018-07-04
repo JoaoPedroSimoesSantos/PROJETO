@@ -363,12 +363,12 @@ def groundtruth(window):
 
 	# # #Frame 3597
 	# for i in range(len(window)):
+	# 	if(22 <= i <= 23 or 40 <= i <= 50 or i == 53 or 60 <= i <= 74 or 80 <= i <= 89 or 92 <= i <= 93 or 99 <= i <= 105 or i == 113 or i == 116 or 120 <= i <= 122 or i == 127 or i == 138 or 140 <= i <= 142 or 161 <= i <= 164 or i == 180 or 184 <= i <= 186 or 195 <= i <= 196):
 	# 		groundtruth[i] = 1
 	# 	elif(i == 26 or i == 90):
 	# 		groundtruth[i] = 2
 	# 	else:
 	# 		groundtruth[i] = 3
-
 
 	# #Frame 3731
 	# for i in range(len(window)):
