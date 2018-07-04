@@ -361,16 +361,16 @@ def groundtruth(window):
 	# 	elif(i == 46 or i == 139 or i == 548):
 	# 		groundtruth[i] = 2
 
-	# # #Frame 3597
-	# for i in range(len(window)):
-	# 	if(22 <= i <= 23 or 40 <= i <= 50 or i == 53 or 60 <= i <= 74 or 80 <= i <= 89 or 92 <= i <= 93 or 99 <= i <= 105 or i == 113 or i == 116 or 120 <= i <= 122 or i == 127 or i == 138 or 140 <= i <= 142 or 161 <= i <= 164 or i == 180 or 184 <= i <= 186 or 195 <= i <= 196):
-	# 		groundtruth[i] = 1
-	# 	elif(i == 26 or i == 90):
-	# 		groundtruth[i] = 2
-	# 	else:
-	# 		groundtruth[i] = 3
+	# #Frame 3597
+	for i in range(len(window)):
+		if(22 <= i <= 23 or 40 <= i <= 50 or i == 53 or 60 <= i <= 74 or 80 <= i <= 89 or 92 <= i <= 93 or 99 <= i <= 105 or i == 113 or i == 116 or 120 <= i <= 122 or i == 127 or i == 138 or 140 <= i <= 142 or 161 <= i <= 164 or i == 180 or 184 <= i <= 186 or 195 <= i <= 196):
+			groundtruth[i] = 1
+		elif(i == 26 or i == 90):
+			groundtruth[i] = 2
+		else:
+			groundtruth[i] = 3
 
-	# #Frame 3731
+	# #Frame 119
 	# for i in range(len(window)):
 	# 	if(0 <= i < 45 ):
 	# 		groundtruth[i] = 1
@@ -557,6 +557,10 @@ if __name__=="__main__":
 	# classi = classificator_train(classifier,old_feat,old_gt)
 	# predi = classificator_test(classi,features)
 
+
+	# print "Acerto ", ((np.sum(predi[predi==1]))/np.sum(ground_truth[ground_truth==1]))*100 
+	# print "%"
+
 	# process_video(cap,classi, size_block_video(cap)[0], size_block_video(cap)[1],4)
 	
 
@@ -570,7 +574,7 @@ if __name__=="__main__":
 	# contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
 	# # # # print "Antes",contours
-	# cv.drawContours(img, np.multiply(contours,8), -1, (0,0,255), 2)
+	# cv.drawContours(img, np.multiply(contours,4), -1, (0,0,255), 2)
 	# # # # print "Depois",contours*2
 
 	# cv.imshow("Imagem Reconstruida",img)
