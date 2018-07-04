@@ -15,13 +15,13 @@ from skimage import data
 from mpl_toolkits import mplot3d
 
 fig = plt.figure(figsize=(8, 8))
-PATCH_SIZE = 8
+PATCH_SIZE = 4
 print "PATCH_SIZE", PATCH_SIZE
 
 # img = cv.imread("images/seagull_database_vis001_small.png")
-img = cv.imread("images/Frame121.jpg")
+img = cv.imread("images/Frame4514.jpg")
 
-res = cv.resize(img,None,fx=0.125, fy=0.125, interpolation = cv.INTER_CUBIC)
+res = cv.resize(img,None,fx=0.25, fy=0.25, interpolation = cv.INTER_CUBIC)
 print "Original", img.shape
 print "Resized", res.shape
 print 
@@ -119,13 +119,13 @@ lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
 # print "Frame 4729"
 # print gray.shape
 
-# ## Frame 4514 salvamento
-# # water_locations = [(65,305),(145,340),(180,560)]
-# water_locations = [(34,154),(70,170),(90,280)]
-# # water_locations = [(10,50),(70,170),(90,280)]
-# # water_locations = [(12,75),(35,80),(45,140)]
-# print "Frame 4514"
-# print gray.shape
+## Frame 4514 salvamento
+# water_locations = [(65,305),(145,340),(180,560)]
+# water_locations = [(30,150),(70,170),(90,280)]
+water_locations = [(10,50),(36,152),(70,170),(90,280)]
+# water_locations = [(4,24),(16,75),(35,80),(45,140)]
+print "Frame 4514"
+print gray.shape
 
 # ## Frame 1 salvamento
 # # water_locations = [(90,150),(50,380),(200,550)]
@@ -135,11 +135,11 @@ lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
 # print "Frame 1"
 # print gray.shape
 
-## Frame 121 salvamento
-# water_locations = [(0,35),(80,250),(140,60)]
-water_locations = [(0,35),(38,120),(65,25)]
-print "Frame 1"
-print gray.shape
+# ## Frame 121 salvamento
+# # water_locations = [(0,35),(81,248),(140,60)]
+# water_locations = [(20,70),(36,120),(68,35)]
+# print "Frame 1"
+# print gray.shape
 
 
 water_patches = []

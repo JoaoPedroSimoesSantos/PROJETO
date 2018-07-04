@@ -235,6 +235,7 @@ def size_block(img):
 
 	r = 0
 	c = 0
+	# dimensoes = [4,5,6]
 	dimensoes = [7,8,9]
 
 	r = [dimensao for dimensao in dimensoes if img_height%dimensao == 0]	
@@ -389,7 +390,7 @@ def process_video(video,classi, windowsize_r, windowsize_c, fator):
 		ret, frame = video.read()
 		idx+=1
 
-		if(idx >= 0):
+		if(idx >= 3570):
 			print "Frame ", idx
 			res = cv.resize(frame,None,fx=1./fator, fy=1./fator, interpolation = cv.INTER_CUBIC)
 
@@ -469,10 +470,10 @@ if __name__=="__main__":
 	classifier = SVC(kernel = 'linear', C = 1.0)
 	classi = classificator_train(classifier,old_feat,old_gt)
 
-	process_video(cap,classi, size_block_video(cap)[0], size_block_video(cap)[1],4)
+	process_video(cap,classi, size_block_video(cap)[0], size_block_video(cap)[1],8)
 
 	# img = cv.imread("images/seagull_database_vis002_small.png")
-	# path_img = "images/Frame121.jpg"
+	# path_img = "images/Frame3580.jpg"
 	# img = cv.imread(path_img)
 
 	# res = cv.resize(img,None,fx=0.25, fy=0.25, interpolation = cv.INTER_CUBIC)
@@ -495,6 +496,8 @@ if __name__=="__main__":
 	# features = features_extraction(window,window_2,window_3,3)
 	# # print "Nfeatures",features.shape
 	# # print features[:,0]
+
+	# show_features_3d(features)
 
 	# #Mostrar os blocks:
 	# print "Resolução Imagem",res.shape
