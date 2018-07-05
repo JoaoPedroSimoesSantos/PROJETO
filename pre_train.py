@@ -24,6 +24,8 @@ import os
 
 from numpy import linalg as LA
 
+import time 
+
 def blocos_16_16(image,windowsize_r,windowsize_c):
 
 	original_height = image.shape[0]
@@ -130,9 +132,7 @@ def ajuste_ground_truth(bloco,window):
 	        if(window[bloco][k][l] < 50):
 	            booleana = True	
 	            break
-	if(booleana):
-		print k	
-		print l            
+
 	return booleana
 
 def reconstruct_GT_aux(ground_truth,window,features):
@@ -297,14 +297,14 @@ def train_pickle(path_img,features_p,ground_truth_p, pickle):
 	return "Nao Juntou"
 
 def read_file(path):
-	file = open(path,"rb")
+	file = open(path,"r")
 	dic = pickle.load(file)
 	file.close()
 
 	return dic
 
 def write_file(path,dic):
-	file = open(path,"wb")
+	file = open(path,"w")
 	pickle.dump(dic,file)
 	file.close()
 
@@ -417,47 +417,67 @@ def process_video(video,classi, windowsize_r, windowsize_c):
 		ret, frame = video.read()
 		idx+=1
 
-		if(idx >= 0):
+		if(idx >= 3570):
 			print "Frame ", idx
-
+			t0 = time.time()
 			# if(381 <= idx <= 665 or 1141 <= idx <= 3070 or 3291 <= idx <= 3880 or 4771 <= idx <= 5752):
-			res = cv.resize(frame,None,fx=1./4, fy=1./4, interpolation = cv.INTER_CUBIC)
-
+			res = cv.resize(frame,None,fx=1./8, fy=1./8, interpolation = cv.INTER_CUBIC)
+			t1 = time.time() - t0
 			# elif(0 <= idx <= 380 or 666 <= idx <= 1140 or 3071 <= idx <= 3290 or 3881 <= idx <= 4770):
 			# 	res = cv.resize(frame,None,fx=1./4, fy=1./4, interpolation = cv.INTER_CUBIC)
-
+			t2 = time.time()
 			gray = cv.cvtColor(res,cv.COLOR_BGR2GRAY)
 			#lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
-			
+			t3 = time.time() - t2
 			# windowsize_r = size_block(res)[0]
 			# windowsize_c = size_block(res)[1]
 
-
+			t4 = time.time()
 			window = blocos_16_16(gray,windowsize_r,windowsize_c)
-
+			t5 = time.time() - t4
 			#window_2 = blocos_16_16(lab[:,:,1],windowsize_r,windowsize_c)
 
 			#window_3 = blocos_16_16(lab[:,:,2],windowsize_r,windowsize_c)
-
+			t6 = time.time()
 			features = features_extraction(window,3)
-
+			t7 = time.time() - t6
 			
+			t8 = time.time()
 			predi = classificator_test(classi,features)
 			# print predi[predi==1]
-			
+			t9 = time.time() - t8
+
+			t10 = time.time()
 			zeros = reconstruct_GT_aux(predi,window,features)
 			# zeros = reconstruct_GT_aux(ground_truth,window)
+			t11 = time.time() - t10
 
+			t12 = time.time()
 			image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
+			t13 = time.time() - t12
 
+			t14 = time.time()
 			contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+			t15 = time.time() - t14
 
+			t16 = time.time() 
 			# if(381 <= idx <= 665 or 1141 <= idx <= 3070 or 3291 <= idx <= 3880 or 4771 <= idx <= 5752):
-			cv.drawContours(frame, np.multiply(contours,4), -1, (0,0,255), 2)
+			cv.drawContours(frame, np.multiply(contours,8), -1, (0,0,255), 2)
+
+			t17 = time.time() - t16
 
 			# elif(0 <= idx <= 380 or 666 <= idx <= 1140 or 3071 <= idx <= 3290 or 3881 <= idx <= 4770):
 				# cv.drawContours(frame, np.multiply(contours,4), -1, (0,0,255), 2)
 
+			print "Resize", t1
+			print "Gray", t3
+			print "Window", t5
+			print "Features", t7
+			print "Predict", t9
+			print "Reconstruct", t11
+			print "Invert", t13
+			print "Contours", t15
+			print "Draw", t17
 			cv.imshow("Imagem Reconstuida",frame)
 		
 
