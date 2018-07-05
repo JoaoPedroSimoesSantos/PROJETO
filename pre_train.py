@@ -39,7 +39,7 @@ def blocos_16_16(image,windowsize_r,windowsize_c):
 	        k+=1
 	return np.uint8(window)
 
-def features_extraction(window,window2,window3, n_features):
+def features_extraction(window,n_features):
 
 	features = np.zeros((window.shape[0], n_features))
 
@@ -47,10 +47,14 @@ def features_extraction(window,window2,window3, n_features):
 
 		glcm = greycomatrix(window[bloco], [1], [3*np.pi/4], symmetric=True, normed=True)
 		contrast = greycoprops(glcm, 'contrast')[0, 0]
+		correlation = greycoprops(glcm, 'correlation')[0, 0]
 		desvio = np.std(window[bloco])
-		desvio_padrao_a = np.std(window2[bloco])
-		desvio_padrao_b = np.std(window3[bloco])
+		#desvio_padrao_a = np.std(window2[bloco])
+		#desvio_padrao_b = np.std(window3[bloco])
 		media = np.mean(window[bloco])
+
+		# if(contrast > 1500):
+			# print bloco
 
 		if(n_features==1):
 			features[bloco][0] = contrast
@@ -61,6 +65,12 @@ def features_extraction(window,window2,window3, n_features):
 			features[bloco][0] = contrast
 			features[bloco][1] = desvio
 			features[bloco][2] = media
+		elif (n_features==4):
+			features[bloco][0] = contrast
+			features[bloco][1] = desvio
+			features[bloco][2] = media
+			features[bloco][3] = correlation
+
 
 	return features
 
@@ -140,12 +150,12 @@ def invers_blocos_16x16(blocos,window,windowsize_r,windowsize_c):
 	        k+=1
 	return np.uint8(image_reconstructed)
 
-def show_features_1d(features):
+def show_features_1d_1(features):
 
 	plt.plot(features,len(features)*[1])
 	plt.show()
 
-def show_features_1d(features,ground_truth):
+def show_features_1d_2(features,ground_truth):
 
 	plt.plot(features[ground_truth==1],len(features[ground_truth==1])*[1],'xg')
 	plt.plot(features[ground_truth==0],len(features[ground_truth==0])*[-1],'or')
@@ -219,6 +229,8 @@ def size_block_video(video):
 
 	r = 0
 	c = 0
+
+	# dimensoes = [4,5,6]
 	dimensoes = [7,8,9]
 
 	r = [dimensao for dimensao in dimensoes if frame_height%dimensao == 0]	
@@ -382,7 +394,7 @@ def groundtruth(window):
 
 	return groundtruth
 
-def process_video(video,classi, windowsize_r, windowsize_c, fator):
+def process_video(video,classi, windowsize_r, windowsize_c):
 
 	idx = 0
 	while(video.isOpened()):
@@ -390,24 +402,29 @@ def process_video(video,classi, windowsize_r, windowsize_c, fator):
 		ret, frame = video.read()
 		idx+=1
 
-		if(idx >= 3570):
+		if(idx >= 666):
 			print "Frame ", idx
-			res = cv.resize(frame,None,fx=1./fator, fy=1./fator, interpolation = cv.INTER_CUBIC)
+
+			# if(381 <= idx <= 665 or 1141 <= idx <= 3070 or 3291 <= idx <= 3880 or 4771 <= idx <= 5752):
+			res = cv.resize(frame,None,fx=1./4, fy=1./4, interpolation = cv.INTER_CUBIC)
+
+			# elif(0 <= idx <= 380 or 666 <= idx <= 1140 or 3071 <= idx <= 3290 or 3881 <= idx <= 4770):
+			# 	res = cv.resize(frame,None,fx=1./4, fy=1./4, interpolation = cv.INTER_CUBIC)
 
 			gray = cv.cvtColor(res,cv.COLOR_BGR2GRAY)
-			lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
+			#lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
 			
-			windowsize_r = size_block(res)[0]
-			windowsize_c = size_block(res)[1]
+			# windowsize_r = size_block(res)[0]
+			# windowsize_c = size_block(res)[1]
 
 
 			window = blocos_16_16(gray,windowsize_r,windowsize_c)
 
-			window_2 = blocos_16_16(lab[:,:,1],windowsize_r,windowsize_c)
+			#window_2 = blocos_16_16(lab[:,:,1],windowsize_r,windowsize_c)
 
-			window_3 = blocos_16_16(lab[:,:,2],windowsize_r,windowsize_c)
+			#window_3 = blocos_16_16(lab[:,:,2],windowsize_r,windowsize_c)
 
-			features = features_extraction(window,window_2,window_3,3)
+			features = features_extraction(window,3)
 
 			
 			predi = classificator_test(classi,features)
@@ -419,7 +436,12 @@ def process_video(video,classi, windowsize_r, windowsize_c, fator):
 			image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
 
 			contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
-			cv.drawContours(frame, np.multiply(contours,fator), -1, (0,0,255), 2)
+
+			# if(381 <= idx <= 665 or 1141 <= idx <= 3070 or 3291 <= idx <= 3880 or 4771 <= idx <= 5752):
+			cv.drawContours(frame, np.multiply(contours,4), -1, (0,0,255), 2)
+
+			# elif(0 <= idx <= 380 or 666 <= idx <= 1140 or 3071 <= idx <= 3290 or 3881 <= idx <= 4770):
+				# cv.drawContours(frame, np.multiply(contours,4), -1, (0,0,255), 2)
 
 			cv.imshow("Imagem Reconstuida",frame)
 		
@@ -459,45 +481,47 @@ if __name__=="__main__":
 
 	plt.clf()
 
-	cap = cv.VideoCapture('images/video_salvamento_aquatico.mp4')
+	# cap = cv.VideoCapture('images/video_salvamento_aquatico.mp4')
 
-	dic = read_file("train_pickle.p")
-	old_feat = dic["features"]
-	old_gt = dic["ground_truth"]
+	# dic = read_file("train_pickle.p")
+	# old_feat = dic["features"]
+	# old_gt = dic["ground_truth"]
 
-	show_features_3d_2(old_feat,old_gt)
+	# show_features_3d_2(old_feat,old_gt)
 
-	classifier = SVC(kernel = 'linear', C = 1.0)
-	classi = classificator_train(classifier,old_feat,old_gt)
+	# classifier = SVC(kernel = 'linear', C = 1.0)
+	# classi = classificator_train(classifier,old_feat,old_gt)
 
-	process_video(cap,classi, size_block_video(cap)[0], size_block_video(cap)[1],8)
+	# process_video(cap,classi, size_block_video(cap)[0], size_block_video(cap)[1])
 
 	# img = cv.imread("images/seagull_database_vis002_small.png")
-	# path_img = "images/Frame3580.jpg"
-	# img = cv.imread(path_img)
+	path_img = "images/Frame675.jpg"
+	img = cv.imread(path_img)
 
-	# res = cv.resize(img,None,fx=0.25, fy=0.25, interpolation = cv.INTER_CUBIC)
+	res = cv.resize(img,None,fx=0.25, fy=0.25, interpolation = cv.INTER_CUBIC)
 	
 
-	# gray = cv.cvtColor(res,cv.COLOR_BGR2GRAY)
-	# lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
+	gray = cv.cvtColor(res,cv.COLOR_BGR2GRAY)
+	lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
 	
 
-	# windowsize_r = size_block(res)[0]
-	# windowsize_c = size_block(res)[1]
+	windowsize_r = size_block(res)[0]
+	windowsize_c = size_block(res)[1]
 
 
-	# window = blocos_16_16(gray,windowsize_r,windowsize_c)
+	window = blocos_16_16(gray,windowsize_r,windowsize_c)
 
 	# window_2 = blocos_16_16(lab[:,:,1],windowsize_r,windowsize_c)
 
 	# window_3 = blocos_16_16(lab[:,:,2],windowsize_r,windowsize_c)
 
-	# features = features_extraction(window,window_2,window_3,3)
+	features = features_extraction(window,3)
+
+	# show_features_1d_1(features)
 	# # print "Nfeatures",features.shape
 	# # print features[:,0]
 
-	# show_features_3d(features)
+	show_features_3d(features)
 
 	# #Mostrar os blocks:
 	# print "Resolução Imagem",res.shape
@@ -526,11 +550,11 @@ if __name__=="__main__":
 	# # print ground_truth.shape
 
 	# show_features_3d_2(features,ground_truth)
-	# train_pickle(path_img,"features.p","ground_truth.p","train_pickle.p")
+	# train_pickle(path_img,"features_4.p","ground_truth.p","train_pickle_4.p")
 
-	# write_file("train_pickle.p",dict(ground_truth=[],features=[]))
-	# write_file("ground_truth.p",dict())
-	# dic = read_file("train_pickle.p")
+	# write_file("train_pickle_4.p",dict(ground_truth=[],features=[]))
+	# write_file("features_4.p",dict())
+	# dic = read_file("train_pickle_4.p")
 	# print dic["features"].shape
 	# print dic
 
@@ -538,49 +562,47 @@ if __name__=="__main__":
 	# dic = read_file("features.p")
 	# print dic.keys()
 	# print dic
-	# update_pickle("features.p",path_img,features)
-	# dic = read_file("features.p")
+	# update_pickle("features_4.p",path_img,features)
+	# dic = read_file("features_4.p")
 	# print dic.keys()
-	# print dic[path_img][41]
+	# print dic[path_img].shape
 
 	# show_features_3d_2(features,ground_truth)
 
 	# feat = read_or_write_pickle("3features_train_ship_3Classes.pickle",features,ground_truth,"Erro")
 	# zeros = reconstruct_GT_aux(predi,window)
-	# dic = read_file("train_pickle.p")
-	# old_feat = dic["features"]
-	# old_gt = dic["ground_truth"]
+	dic = read_file("train_pickle.p")
+	old_feat = dic["features"]
+	old_gt = dic["ground_truth"]
 
 	# show_features_3d_2(old_feat,old_gt)
 	# show_features_3d_3(old_feat,old_gt, features)
 	# print old_feat.shape
 	# # print old_gt
 
-	# classifier = SVC(kernel = 'linear', C = 1.0)
-	# classi = classificator_train(classifier,old_feat,old_gt)
-	# predi = classificator_test(classi,features)
+	classifier = SVC(kernel = 'linear', C = 1.0)
+	classi = classificator_train(classifier,old_feat,old_gt)
+	predi = classificator_test(classi,features)
 
 
 	# print "Acerto ", ((np.sum(predi[predi==1]))/np.sum(ground_truth[ground_truth==1]))*100 
 	# print "%"
-
-	# process_video(cap,classi, size_block_video(cap)[0], size_block_video(cap)[1],4)
 	
 
 	# print "Coef1", classi.coef_
 	# print "Number of Support Vectors", classi.support_vectors_
 
 	# zeros = reconstruct_GT_aux(ground_truth,window, features)
-	# zeros = reconstruct_GT_aux(predi,window, features)
+	zeros = reconstruct_GT_aux(predi,window, features)
 
-	# image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
-	# contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+	image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
+	contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
 	# # # # print "Antes",contours
-	# cv.drawContours(img, np.multiply(contours,4), -1, (0,0,255), 2)
+	cv.drawContours(img, np.multiply(contours,4), -1, (0,0,255), 2)
 	# # # # print "Depois",contours*2
 
-	# cv.imshow("Imagem Reconstruida",img)
-	# cv.waitKey(0)
-	# cv.destroyAllWindows()
+	cv.imshow("Imagem Reconstruida",img)
+	cv.waitKey(0)
+	cv.destroyAllWindows()
 

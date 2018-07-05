@@ -15,11 +15,11 @@ from skimage import data
 from mpl_toolkits import mplot3d
 
 fig = plt.figure(figsize=(8, 8))
-PATCH_SIZE = 4
+PATCH_SIZE = 8
 print "PATCH_SIZE", PATCH_SIZE
 
 # img = cv.imread("images/seagull_database_vis001_small.png")
-img = cv.imread("images/Frame4514.jpg")
+img = cv.imread("images/Frame675.jpg")
 
 res = cv.resize(img,None,fx=0.25, fy=0.25, interpolation = cv.INTER_CUBIC)
 print "Original", img.shape
@@ -119,13 +119,13 @@ lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
 # print "Frame 4729"
 # print gray.shape
 
-## Frame 4514 salvamento
-# water_locations = [(65,305),(145,340),(180,560)]
-# water_locations = [(30,150),(70,170),(90,280)]
-water_locations = [(10,50),(36,152),(70,170),(90,280)]
-# water_locations = [(4,24),(16,75),(35,80),(45,140)]
-print "Frame 4514"
-print gray.shape
+# ## Frame 4514 salvamento
+# # water_locations = [(65,305),(145,340),(180,560)]
+# # water_locations = [(30,150),(70,170),(90,280)]
+# water_locations = [(10,50),(27,152),(70,170),(90,280)]
+# # water_locations = [(4,24),(16,75),(35,80),(45,140)]
+# print "Frame 4514"
+# print gray.shape
 
 # ## Frame 1 salvamento
 # # water_locations = [(90,150),(50,380),(200,550)]
@@ -141,6 +141,12 @@ print gray.shape
 # print "Frame 1"
 # print gray.shape
 
+## Frame 675 salvamento
+# water_locations = [(0,35),(81,248),(140,60)]
+water_locations = [(162,70),(36,120),(135,32)]
+print "Frame 675"
+print gray.shape
+
 
 water_patches = []
 for loc in water_locations:
@@ -153,10 +159,8 @@ for patch in (water_patches):
     glcm = greycomatrix(patch, [1], [3*np.pi/4], symmetric=True, normed=True)
     # print greycoprops(glcm, 'contrast')
     zs.append(greycoprops(glcm, 'contrast')[0, 0])
-    # zs.append(greycoprops(glcm, 'energy')[0, 0])
     # zs.append(greycoprops(glcm, 'correlation')[0, 0])
     # zs.append(greycoprops(glcm, 'dissimilarity')[0, 0])
-    # zs.append(greycoprops(glcm, 'ASM')[0, 0])
 
     media = np.mean(patch)
     desvio_padrao = np.std(patch)
@@ -199,6 +203,7 @@ ax.legend()
 # display the image patches
 for i, patch in enumerate(water_patches):
     ax = fig.add_subplot(2,len(water_patches),len(water_patches)+i+1)
+    print patch
     ax.imshow(patch, cmap=plt.cm.gray, interpolation='nearest', vmin=0, vmax=255)
     ax.set_xlabel('Water %d' % (i + 1))
 
