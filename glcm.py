@@ -203,7 +203,6 @@ ax.legend()
 # display the image patches
 for i, patch in enumerate(water_patches):
     ax = fig.add_subplot(2,len(water_patches),len(water_patches)+i+1)
-    print patch
     ax.imshow(patch, cmap=plt.cm.gray, interpolation='nearest', vmin=0, vmax=255)
     ax.set_xlabel('Water %d' % (i + 1))
 
