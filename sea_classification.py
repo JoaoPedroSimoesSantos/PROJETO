@@ -228,7 +228,7 @@ if __name__=="__main__":
 
 	plt.clf()
 
-	img = cv.imread("images/seagull_database_vis011_small.png")
+	img = cv.imread("images/seagull_database_vis001_small.png")
 
 
 	res = cv.resize(img,None,fx=0.5, fy=0.5, interpolation = cv.INTER_CUBIC)
@@ -248,7 +248,7 @@ if __name__=="__main__":
 
 	window_3 = blocos_16_16(lab[:,:,2],windowsize_r,windowsize_c)
 
-	features = features_extraction(window,window_2,window_3,3)
+	features = features_extraction(window,window_2,window_3,1)
 	# print features[:,0]
 
 	# show_features_3d(features)
@@ -266,29 +266,29 @@ if __name__=="__main__":
 	# print "NOVO",feat
 
 
-	# dic = read_file("features_train.pickle")
-	# old_feat = dic["features"]
-	# old_gt = dic["ground_truth"]
+	dic = read_file("features_train.pickle")
+	old_feat = dic["features"]
+	old_gt = dic["ground_truth"]
 
 	# print dic
 	# print old_gt.shape
-	# classifier = SVC()
-	# classi = classificator_train(classifier,old_feat,old_gt)
-	# predi = classificator_test(classi,features)
+	classifier = SVC()
+	classi = classificator_train(classifier,old_feat,old_gt)
+	predi = classificator_test(classi,features)
 
 	# print predi
 	
 	
-	# zeros = reconstruct_GT_aux(predi,window)
+	zeros = reconstruct_GT_aux(predi,window)
 	# zeros = reconstruct_GT_aux(ground_truth,window)
 
-	# image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
-	# # contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+	image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
+	contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
 	# # print "Antes",contours
-	# # cv.drawContours(img, np.multiply(contours,2), -1, (0,0,255), 2)
+	cv.drawContours(img, np.multiply(contours,2), -1, (0,0,255), 2)
 	# # print "Depois",contours*2
 
-	# cv.imshow("Imagem Reconstruida",image_reconstructed)
-	# cv.waitKey(0)
-	# cv.destroyAllWindows()
+	cv.imshow("Imagem Reconstruida",img)
+	cv.waitKey(0)
+	cv.destroyAllWindows()

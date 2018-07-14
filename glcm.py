@@ -19,7 +19,7 @@ PATCH_SIZE = 8
 print "PATCH_SIZE", PATCH_SIZE
 
 # img = cv.imread("images/seagull_database_vis001_small.png")
-img = cv.imread("images/Frame675.jpg")
+img = cv.imread("images/Frame120.jpg")
 
 res = cv.resize(img,None,fx=0.25, fy=0.25, interpolation = cv.INTER_CUBIC)
 print "Original", img.shape
@@ -138,14 +138,20 @@ lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
 # ## Frame 121 salvamento
 # # water_locations = [(0,35),(81,248),(140,60)]
 # water_locations = [(20,70),(36,120),(68,35)]
-# print "Frame 1"
+# print "Frame 121"
 # print gray.shape
 
-## Frame 675 salvamento
+## Frame 120 salvamento
 # water_locations = [(0,35),(81,248),(140,60)]
-water_locations = [(162,70),(36,120),(135,32)]
-print "Frame 675"
+water_locations = [(64,135),(71,135),(71,127)]
+print "Frame 120"
 print gray.shape
+
+# ## Frame 675 salvamento
+# # water_locations = [(0,35),(81,248),(140,60)]
+# water_locations = [(162,70),(36,120),(135,32)]
+# print "Frame 675"
+# print gray.shape
 
 
 water_patches = []

@@ -26,6 +26,8 @@ from numpy import linalg as LA
 
 import time 
 
+import sys
+
 def blocos_16_16(image,windowsize_r,windowsize_c):
 
 	original_height = image.shape[0]
@@ -33,13 +35,18 @@ def blocos_16_16(image,windowsize_r,windowsize_c):
 
 	window = np.zeros((original_width/windowsize_c*original_height/windowsize_r,windowsize_r,windowsize_c))
 
+	loc_blocos = np.zeros((window.shape[0],2))
+
 	k = 0
 	for r in range(0,image.shape[0] , windowsize_r):
 	    for c in range(0,image.shape[1], windowsize_c):
 	    	# print r,c
 	        window[k] = image[r:r+windowsize_r,c:c+windowsize_c]
+	        loc_blocos[k] = [r,c]
 	        k+=1
-	return np.uint8(window)
+
+
+	return np.uint8(window), loc_blocos
 
 def features_extraction(window,n_features):
 
@@ -76,60 +83,13 @@ def features_extraction(window,n_features):
 
 	return features
 
-def features_filter(features,window,n_features):
-
-	zeros = np.zeros(window.shape)
-	ground_truth = np.zeros(window.shape[0])
-
-	for i in range(features.shape[0]):
-
-		if(n_features==1):
-			if(features[i] < 400 ):
-				
-				zeros[i] = window[i]
-				ground_truth[i] = 1
-
-		if(n_features==2):
-
-			if(features[i][0] > 400 and features[i][1] > 1.2):
-				
-				zeros[i] = window[i]
-				ground_truth[i] = 1
-
-		if(n_features==3):
-
-			if(features[i][0] > 400 and features[i][1] > 3 and features[i][2] > 4):
-				
-				zeros[i] = window[i]
-				ground_truth[i] = 1
-
-
-	return zeros,ground_truth
-
-def ground_truth_filter(features,window):
-
-	ground_truth = np.zeros(len(window))
-
-	for i in range(len(features)):
-
-		if(features[i][0] < 12 and features[i][1] < 8 and 120 < features[i][2] < 145):
-				
-				ground_truth[i] = 1
-		elif(features[i][0] > 150 and features[i][1] > 20 and features[i][2] < 140):
-				
-				ground_truth[i] = 2
-		elif(features[i][0] > 15 and features[i][1] > 15 and features[i][2] > 140):
-		
-			ground_truth[i] = 3
-
-	return ground_truth	
 
 def ajuste_ground_truth(bloco,window):
 
 	booleana = False
 	for k in range(window[bloco].shape[0]):
 	    for l in range(window[bloco].shape[1]):
-	        if(window[bloco][k][l] < 50):
+	        if(window[bloco][k][l] < 40): ##ver bem esta heuristica
 	            booleana = True	
 	            break
 
@@ -138,7 +98,7 @@ def ajuste_ground_truth(bloco,window):
 def reconstruct_GT_aux(ground_truth,window,features):
 
 	zeros = np.zeros(window.shape)
-
+	idx_true = []
 	for i in range(len(ground_truth)):
 
 		if(ground_truth[i] == 1):# and features[i,0] > 25):	
@@ -147,10 +107,11 @@ def reconstruct_GT_aux(ground_truth,window,features):
 			if(booleana):
 				# zeros[i] = window[i]
 				zeros[i] = np.array([[255]*window[i].shape[1]]*window[i].shape[0])
+				idx_true.append(i)
 				# print i
 				# print "Contraste",features[i,0]
 
-	return zeros
+	return zeros, idx_true
 
 def invers_blocos_16x16(blocos,window,windowsize_r,windowsize_c):
 
@@ -161,6 +122,7 @@ def invers_blocos_16x16(blocos,window,windowsize_r,windowsize_c):
 	k = 0
 	for i in range(0,image_reconstructed.shape[0],windowsize_r):
 	    for j in range(0,image_reconstructed.shape[1],windowsize_c):
+
 	        image_reconstructed[i:i+windowsize_r,j:j+windowsize_c] = blocos[k]
 	        k+=1
 	return np.uint8(image_reconstructed)
@@ -222,23 +184,9 @@ def show_features_3d_3(features,ground_truth, new_features):
 	ax.legend()
 	plt.show()
 
-def trans_class(groundtruth):
-
-	for i in range(len(groundtruth)):
-
-		if(groundtruth[i] == 0 or groundtruth[i] == 1 or groundtruth[i] == 3):
-
-			groundtruth[i] = 0
-
-		else:
-			groundtruth[i] = 1
-
-	return groundtruth
-
 def size_block_video(video):
 
 	ret, frame = video.read()
-
 	frame_height = frame.shape[0]
 	frame_width = frame.shape[1]
 
@@ -409,22 +357,47 @@ def groundtruth(window):
 
 	return groundtruth
 
-def process_video(video,classi, windowsize_r, windowsize_c):
+def trans_class(groundtruth):
+
+	for i in range(len(groundtruth)):
+
+		if(groundtruth[i] == 0 or groundtruth[i] == 1 or groundtruth[i] == 3):
+
+			groundtruth[i] = 0
+
+		else:
+			groundtruth[i] = 1
+
+	return groundtruth
+
+def process_video(video,out,classi, windowsize_r, windowsize_c):
 
 	idx = 0
+	old_blocos_true = []
+	old_locations = []
+	blocos_desaparecidos = []
 	while(video.isOpened()):
 
 		ret, frame = video.read()
 		idx+=1
 
-		if(idx >= 3570):
-			print "Frame ", idx
+		if(idx >= 115):
+			print "Frame -------------------------------------------------------------", idx
 			t0 = time.time()
-			# if(381 <= idx <= 665 or 1141 <= idx <= 3070 or 3291 <= idx <= 3880 or 4771 <= idx <= 5752):
-			res = cv.resize(frame,None,fx=1./8, fy=1./8, interpolation = cv.INTER_CUBIC)
-			t1 = time.time() - t0
-			# elif(0 <= idx <= 380 or 666 <= idx <= 1140 or 3071 <= idx <= 3290 or 3881 <= idx <= 4770):
-			# 	res = cv.resize(frame,None,fx=1./4, fy=1./4, interpolation = cv.INTER_CUBIC)
+			if(381 <= idx <= 665 or 1141 <= idx <= 3070 or 3291 <= idx <= 3880 or 4771 <= idx <= 5752):
+				res = cv.resize(frame,None,fx=1./8, fy=1./8, interpolation = cv.INTER_CUBIC)
+			
+			elif(0 <= idx <= 380 or 666 <= idx <= 1140 or 3071 <= idx <= 3290 or 3881 <= idx <= 4770):
+				res = cv.resize(frame,None,fx=1./4, fy=1./4, interpolation = cv.INTER_CUBIC)
+
+			if(idx == 381 or idx == 666 or idx == 1141 or idx == 3071 or idx == 3291 or idx == 3881 or idx == 4771):
+				old_blocos_true = []
+				old_locations = []
+				blocos_desaparecidos = []
+			if(idx%10 == 0):
+				blocos_desaparecidos = []
+
+			t1 = time.time() -t0
 			t2 = time.time()
 			gray = cv.cvtColor(res,cv.COLOR_BGR2GRAY)
 			#lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
@@ -433,7 +406,7 @@ def process_video(video,classi, windowsize_r, windowsize_c):
 			# windowsize_c = size_block(res)[1]
 
 			t4 = time.time()
-			window = blocos_16_16(gray,windowsize_r,windowsize_c)
+			window,loc_blocos = blocos_16_16(gray,windowsize_r,windowsize_c)
 			t5 = time.time() - t4
 			#window_2 = blocos_16_16(lab[:,:,1],windowsize_r,windowsize_c)
 
@@ -448,12 +421,37 @@ def process_video(video,classi, windowsize_r, windowsize_c):
 			t9 = time.time() - t8
 
 			t10 = time.time()
-			zeros = reconstruct_GT_aux(predi,window,features)
+			# zeros, idx_true = reconstruct_GT_aux(predi,window,features)
+			zeros, blocos_true = reconstruct_GT_aux(predi,window,features)
+
+			print "NEW Blocos ----> ", blocos_true
+
+			if(len(old_blocos_true)!=0 or len(blocos_true)!=0):
+				old_blocos_true,old_locations, blocos_desaparecidos, idx_remover = tracking(old_blocos_true,blocos_true,old_locations,blocos_desaparecidos,gray,loc_blocos,windowsize_r, windowsize_c)
+				blocos_desaparecidos = remover_desaparecidos(blocos_desaparecidos,idx_remover)
+			if(len(old_locations)!=0):
+				old_locations = ajuste_locations(old_locations,blocos_desaparecidos,gray,windowsize_r,windowsize_c)
+			
+			print "--------------"
+			print "OLD Blocos SAIDA ----> ",old_blocos_true
+			print "OLD LOCATIONS SAIDA ---->",old_locations
+			print "BLOCOS DESAPARECIDOS ---->", blocos_desaparecidos
+			print "--------------"
+
 			# zeros = reconstruct_GT_aux(ground_truth,window)
 			t11 = time.time() - t10
 
 			t12 = time.time()
-			image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
+			# image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
+			# locations = ajuste_bloco(loc_blocos, idx_true, gray, windowsize_r, windowsize_c)
+			locations = ajuste_bloco(loc_blocos, old_blocos_true, gray, windowsize_r, windowsize_c)
+			# print "LOCATIONS PARA A MASCARA 0 --> ", locations
+			if(len(old_locations)!= 0):
+				print "LOCATIONS PARA ADICIONAR---> ", old_locations
+				locations = add_locations(old_locations,locations)
+			# 	print "LOCATIONS PARA A MASCARA 1 --> ", locations 
+			print "LOCATIONS PARA A MASCARA 2 --> ", locations
+			image_reconstructed = nova_mascara(locations,gray,windowsize_r,windowsize_c)
 			t13 = time.time() - t12
 
 			t14 = time.time()
@@ -461,38 +459,34 @@ def process_video(video,classi, windowsize_r, windowsize_c):
 			t15 = time.time() - t14
 
 			t16 = time.time() 
-			# if(381 <= idx <= 665 or 1141 <= idx <= 3070 or 3291 <= idx <= 3880 or 4771 <= idx <= 5752):
-			cv.drawContours(frame, np.multiply(contours,8), -1, (0,0,255), 2)
+			if(381 <= idx <= 665 or 1141 <= idx <= 3070 or 3291 <= idx <= 3880 or 4771 <= idx <= 5752):
+				cv.drawContours(frame, np.multiply(contours,8), -1, (0,0,255), 2)
 
+			elif(0 <= idx <= 380 or 666 <= idx <= 1140 or 3071 <= idx <= 3290 or 3881 <= idx <= 4770):
+				cv.drawContours(frame, np.multiply(contours,4), -1, (0,0,255), 2)
 			t17 = time.time() - t16
 
-			# elif(0 <= idx <= 380 or 666 <= idx <= 1140 or 3071 <= idx <= 3290 or 3881 <= idx <= 4770):
-				# cv.drawContours(frame, np.multiply(contours,4), -1, (0,0,255), 2)
-
-			print "Resize", t1
-			print "Gray", t3
-			print "Window", t5
-			print "Features", t7
-			print "Predict", t9
-			print "Reconstruct", t11
-			print "Invert", t13
-			print "Contours", t15
-			print "Draw", t17
+			# print "Resize", t1
+			# print "Gray", t3
+			# print "Window", t5
+			# print "Features", t7
+			# print "Predict", t9
+			# print "Reconstruct", t11
+			# print "Invert", t13
+			# print "Contours", t15
+			# print "Draw", t17
 			cv.imshow("Imagem Reconstuida",frame)
+			# out.write(frame)
 		
 
-		if cv.waitKey(30) & 0xff == ord('q'):
+		if cv.waitKey(30) & 0xff == ord('q') or idx == 3650:
 			break    
 
 	video.release()
 	cv.destroyAllWindows()
 
+def mostrar_blocos(res,window):
 
-def input_label(window, res):
-
-	groundtruth = np.ones(len(window))
-
-	
 	#Mostrar os blocks:
 	print "Resolução Imagem",res.shape
 	print "Dimensao dos blocos", window[0].shape
@@ -500,24 +494,379 @@ def input_label(window, res):
 		print i
 		showimg("Block Original",resize(window[i],window[i].shape[0],window[i].shape[1]))
 		
-		glcm = greycomatrix(window[i], [1], [0, np.pi/2, np.pi/4, 3*np.pi/4], symmetric=True, normed=True)
-		print "Media     Desvio      Contraste"
+		glcm = greycomatrix(window[i], [1], [3*np.pi/4], symmetric=True, normed=True)
+		print "Media       Desvio        Contraste"
 		print np.array([np.mean(window[i]),np.std(window[i]),greycoprops(glcm, 'contrast')[0, 0]])
-  		
-		print "Label: "
-		label = input()
-		
-		groundtruth[i] = label
+	# showimg("Original",res)
 
-	return groundtruth
+
+def ajuste_bloco(object_locations,blocos,gray, windowsize_r, windowsize_c):
+
+	locations = []
+
+	y_final = 0
+	x_final = 0
+
+	window_size = 4
+	print "AJUSTE BLOCOS ---> ", blocos
+	for bloco in blocos:
+		location = object_locations[bloco] 
+
+		y_inicial = np.int(location[0])
+		x_inicial = np.int(location[1])
+
+		patch_inicial = gray[y_inicial:y_inicial+windowsize_r,x_inicial:x_inicial+windowsize_c]
+		glcm = greycomatrix(patch_inicial, [1], [3*np.pi/4], symmetric=True, normed=True)
+		contrast_inicial = greycoprops(glcm, 'contrast')[0, 0]
+
+		print "Contraste Inicial", contrast_inicial
+		print "Y Inicial", y_inicial
+		print "X Inicial", x_inicial
+
+
+		# y_atual = y_inicial
+		# x_atual = x_inicial
+		maior = False
+
+		patch_atual = np.zeros((windowsize_r,windowsize_c))
+
+		for col in range(-window_size,window_size,1):
+			x_atual = x_inicial + col
+			for row in range(-window_size,window_size,1):
+				y_atual = y_inicial + row
+				patch_atual = gray[y_atual:y_atual+windowsize_r,x_atual:x_atual+windowsize_c]
+				if(patch_atual.shape == (windowsize_r,windowsize_c)):
+					glcm = greycomatrix(patch_atual, [1], [3*np.pi/4], symmetric=True, normed=True)
+					contrast = greycoprops(glcm, 'contrast')[0, 0]
+					# cv.imshow("Patch Atual",patch_atual)
+					# cv.waitKey(0)
+					# cv.destroyAllWindows()
+					
+					if(contrast > contrast_inicial):
+						maior = True
+						# print "Contraste Maior",contrast
+						# print "Y Atual", y_atual
+						# print "X Atual", x_atual
+						contrast_inicial = contrast
+						y_final = y_atual
+						x_final = x_atual
+		
+		if(maior==False):
+			y_final = y_inicial
+			x_final = x_inicial
+		locations.append([y_final,x_final,bloco])
+
+
+	return locations
+
+def ajuste_locations(locations,blocos_desaparecidos,gray, windowsize_r, windowsize_c):
+	
+	y_final = 0
+	x_final = 0
+
+	window_size = 4
+
+	new_locations = []
+	for location in locations: 
+		print "AJUSTE LOCATION ---> ",location
+		continua = False
+
+		y_inicial = location[0]
+		x_inicial = location[1]
+		bloco = location[2]
+
+		if(len(blocos_desaparecidos)!=0):
+			for i in range(len(blocos_desaparecidos)):
+				if(blocos_desaparecidos[i] == bloco):
+					print "ESTA LOCATION ESTA PERTO "
+					continua = True
+		if(continua == True):
+			patch_inicial = gray[y_inicial:y_inicial+windowsize_r,x_inicial:x_inicial+windowsize_c]
+			glcm = greycomatrix(patch_inicial, [1], [3*np.pi/4], symmetric=True, normed=True)
+			contrast_inicial = greycoprops(glcm, 'contrast')[0, 0]
+
+			print "Contraste Inicial", contrast_inicial
+			print "Y Inicial", y_inicial
+			print "X Inicial", x_inicial
+
+
+			# y_atual = y_inicial
+			# x_atual = x_inicial
+			maior = False
+
+			patch_atual = np.zeros((windowsize_r,windowsize_c))
+
+			for col in range(-window_size,window_size,1):
+				x_atual = x_inicial + col
+				for row in range(-window_size,window_size,1):
+					y_atual = y_inicial + row
+					patch_atual = gray[y_atual:y_atual+windowsize_r,x_atual:x_atual+windowsize_c]
+					if(patch_atual.shape == (windowsize_r,windowsize_c)):
+						glcm = greycomatrix(patch_atual, [1], [3*np.pi/4], symmetric=True, normed=True)
+						contrast = greycoprops(glcm, 'contrast')[0, 0]
+						# cv.imshow("Patch Atual",patch_atual)
+						# cv.waitKey(0)
+						# cv.destroyAllWindows()
+
+						booleana = False
+						for k in range(windowsize_r):
+						    for l in range(windowsize_c):
+						        if(patch_atual[k][l] < 40): ##ver bem esta heuristica
+						            booleana = True	
+						            break
+						
+						if(contrast >= contrast_inicial and booleana == True):
+							maior = True
+							print " "
+							print "Contraste Maior",contrast
+							print "Y Atual", y_atual
+							print "X Atual", x_atual
+							print " "
+							contrast_inicial = contrast
+							y_final = y_atual
+							x_final = x_atual
+			if(maior == True):
+				new_locations.append([y_final,x_final,bloco])
+			else:
+				new_locations.append([y_inicial,x_inicial,bloco])
+
+	return new_locations
+
+def nova_mascara(locations,window,windowsize_r,windowsize_c):
+
+	original_height = window.shape[0]
+	original_width = window.shape[1]
+
+	image_reconstructed = np.zeros((original_height,original_width))
+
+	for loc in locations:
+
+		image_reconstructed[loc[0]:loc[0]+windowsize_r,loc[1]:loc[1]+windowsize_c] = np.array([[255]*windowsize_c]*windowsize_r)
+
+	return np.uint8(image_reconstructed)
+
+def proximidade_blocos(bloco1,bloco2):
+
+	proximidade = False
+	vizinhos = [bloco1,bloco1-1,bloco1+1,bloco1-40,bloco1+40,bloco1-1-40,bloco1+1-40,bloco1-1+40,bloco1+1+40]
+
+	for vizinho in vizinhos:
+
+		if(bloco2 == vizinho):
+			proximidade = True
+			break
+		
+	return proximidade
+
+def proximidade_locations(location1,location2):
+
+	proximidade = False
+	
+	dist = np.sqrt((location2[1]-location1[1])**2 + (location2[0]-location1[0])**2)
+	
+	if(dist<10):
+		proximidade = True
+		
+	return proximidade
+
+def add_locations(locations1,locations2):
+
+	final_locations = np.zeros((len(locations1)+len(locations2),2))
+
+	k = 0
+	for i in range(len(locations2)):
+		final_locations[k] = [locations2[i][0],locations2[i][1]]
+		k += 1
+	for j in range(len(locations1)):
+		final_locations[k] = [locations1[j][0],locations1[j][1]]
+		k += 1
+
+	# print "LOCATIONS PARA A MASCARA 3 --> ", locations1[0]
+	# print "LOCATIONS PARA A MASCARA 4 --> ", locations2
+	locations2.append(locations1) ###Ver tamanho de locations
+	# print "LOCATIONS PARA A MASCARA 5 --> ", locations2
+	return final_locations
+
+def remover_desaparecidos(blocos_desaparecidos,idx_remover):
+
+	for idx in idx_remover:
+		blocos_desaparecidos.remove(idx)
+
+	return blocos_desaparecidos
+def tracking(old_blocos,new_blocos,old_locations,blocos_desaparecidos,gray,object_locations,windowsize_r, windowsize_c):
+
+	blocos = []
+	idx_remover = []
+	if(len(new_blocos)>=len(old_blocos)):
+		print "NEWBLOCOS >= OLDBLOCOS"
+		print " "
+		if(len(old_blocos)==0):
+			print "OLDBLOCOS == 0"
+			print " "
+			blocos = new_blocos
+			if(len(blocos_desaparecidos)!=0):
+				print "0 - BLOCOS DESAPARECIDOS != 0"
+				print " "
+				for i in range(len(new_blocos)):
+					for j in range(len(blocos_desaparecidos)):
+
+						proximidade = proximidade_blocos(new_blocos[i],blocos_desaparecidos[j])
+
+						if(proximidade == True):
+							print "NEWBLOCO PROXIMO DESAPARECIDO"
+							print " "
+							idx_remover.append(blocos_desaparecidos[j])
+		else:
+			if(len(blocos_desaparecidos)!=0):
+				print "1 - BLOCOS DESAPARECIDOS != 0"
+				print " "
+				for i in range(len(new_blocos)):
+					for j in range(len(blocos_desaparecidos)):
+
+						proximidade = proximidade_blocos(new_blocos[i],blocos_desaparecidos[j])
+
+						if(proximidade == True):
+							print "NEWBLOCO PROXIMO DESAPARECIDO"
+							print " "
+							idx_remover.append(blocos_desaparecidos[j])
+				
+			print "OLDBLOCOS != 0"
+			print " "		
+					
+			blocos = new_blocos
+			for i in range(len(old_blocos)):
+				k = len(new_blocos)
+				for j in range(len(new_blocos)):
+
+					proximidade = proximidade_blocos(old_blocos[i],new_blocos[j])
+
+					if(proximidade == True):
+						print "OLDBLOCO PROXIMO NEWBLOCO"
+						print " "
+						k +=1
+					k -=1
+					if(k==0):
+						print "AJUSTE OLDBLOCO E APPEND NOVA LOCATION E BLOCO DESAPARECIDO"
+						print " "
+						location = ajuste_bloco(object_locations,[old_blocos[i]],gray, windowsize_r, windowsize_c)
+						if(len(old_locations)!=0):
+							print "OLD LOCATIONS != 0"
+							print " "
+							for loc in old_locations:
+								proximidade_loc = proximidade_locations(loc,location[0]) ###FALTA VER LOCATION COM DESAPARECIDOS
+								if(proximidade_loc == True):
+									print "NOVA LOCATION == OLD LOCATION"
+									print " "
+									old_locations.remove(loc)
+									old_locations.append(location[0])
+						old_locations.append(location[0])
+						blocos_desaparecidos.append(old_blocos[i])
+			# elif(len(old_blocos)==0):
+			# 	print "OLDBLOCOS == 0 --> BLOCOS = NEWBLOCOS"
+			# 	print " "
+			# 	blocos = new_blocos
+			# 	if(len(blocos_desaparecidos)!=0):
+			# 		print "2 - BLOCOS DESAPARECIDOS !=0"
+			# 		print " "
+			# 		for i in range(len(new_blocos)):
+			# 			for j in range(len(blocos_desaparecidos)):
+
+			# 				proximidade = proximidade_blocos(new_blocos[i],blocos_desaparecidos[j])
+
+			# 				if(proximidade == True):
+			# 					print "NEWBLOCO PROXIMO DESAPARECIDO"
+			# 					print " "
+			# 					blocos_desaparecidos.remove(blocos_desaparecidos[j])
+	else:
+		print "NEWBLOCOS < OLDBLOCOS"
+		print " "
+		if(len(blocos_desaparecidos)!=0 & len(new_blocos)!=0):
+			print "3 - BLOCOS DESAPARECIDOS !=0"
+			print " "
+			for i in range(len(new_blocos)):
+				for j in range(len(blocos_desaparecidos)):
+
+						proximidade = proximidade_blocos(new_blocos[i],blocos_desaparecidos[j])
+						if(proximidade == True):
+							print "NEWBLOCO PROXIMO DESAPARECIDO"
+							print " "
+							idx_remover.append(blocos_desaparecidos[j])					
+		if(len(new_blocos)!=0):
+			print "NEWBLOCO != 0"
+			print " "
+			for i in range(len(old_blocos)):
+				k = len(new_blocos)
+				for j in range(len(new_blocos)):
+
+					proximidade = proximidade_blocos(old_blocos[i],new_blocos[j])
+
+					if(proximidade == True):
+						print "NEWBLOCO PROXIMO OLDBLOCO"
+						print " "
+						blocos.append(new_blocos[j])
+						k +=1
+					k -=1
+					if(k==0): ### AINDA NAO SEI SE DEVA FAZER ESTA PROXIMIDADE DE LOCATIONS AQUI
+						print "BLOCO -->", old_blocos[i]
+						print "AJUSTE OLDBLOCO E APPEND NOVA LOCATION E BLOCO DESAPARECIDO"
+						print " "
+						location = ajuste_bloco(object_locations,[old_blocos[i]],gray, windowsize_r, windowsize_c)
+						if(len(old_locations)!=0):
+							print "OLD LOCATIONS != 0"
+							print " "
+							for loc in old_locations:
+								proximidade_loc = proximidade_locations(loc,location[0]) ###FALTA VER LOCATION COM DESAPARECIDOS
+								if(proximidade_loc == True):
+									print "NOVA LOCATION == OLD LOCATION"
+									print " "
+									old_locations.remove(loc)
+									old_locations.append(location[0])
+						old_locations.append(location[0])
+						blocos_desaparecidos.append(old_blocos[i])
+		else:
+			print "NEWBLOCO == 0"
+			print " "
+			print "AJUSTE OLDBLOCO E APPEND DO BLOCO DESAPARECIDO E APPEND NOVA LOCATION"
+			print " "
+
+			for i in range(len(old_blocos)):
+				blocos_desaparecidos.append(old_blocos[i])
+				location = ajuste_bloco(object_locations,[old_blocos[i]],gray, windowsize_r, windowsize_c)
+				if(len(old_locations)!=0):
+							print "OLD LOCATIONS != 0"
+							print " "
+							for loc in old_locations:
+								print " "
+								print "LOC NA OLD LOCATION -->    ", loc
+								print "LOCATION PARA ADICIONAR --> ", location
+								print " "
+								proximidade_loc = proximidade_locations(loc,location[0]) ###FALTA VER LOCATION COM DESAPARECIDOS
+								if(proximidade_loc == True):
+									print "NOVA LOCATION == OLD LOCATION"
+									print " "
+									old_locations.remove(loc)
+									old_locations.append(location[0])
+				old_locations.append(location[0])
+			blocos = new_blocos
+
+	return blocos, old_locations, blocos_desaparecidos, idx_remover
+					
+					
+
+		
+
+
 
 
 if __name__=="__main__":
 
-	plt.clf()
+	# plt.clf()
 
 	cap = cv.VideoCapture('images/video_salvamento_aquatico.mp4')
 
+
+	out = cv.VideoWriter('images/frames_processadas.avi', cv.cv.CV_FOURCC('X','V','I','D'), 20, (1280,720))
+	# out = 0
 	dic = read_file("train_pickle.p")
 	old_feat = dic["features"]
 	old_gt = dic["ground_truth"]
@@ -527,13 +876,16 @@ if __name__=="__main__":
 	classifier = SVC(kernel = 'linear', C = 1.0)
 	classi = classificator_train(classifier,old_feat,old_gt)
 
-	process_video(cap,classi, size_block_video(cap)[0], size_block_video(cap)[1])
+	process_video(cap,out,classi, size_block_video(cap)[0], size_block_video(cap)[1])
+
 
 	# img = cv.imread("images/seagull_database_vis002_small.png")
-	# path_img = "images/Frame675.jpg"
+	# path_img = "images/Frame3727.jpg"
 	# img = cv.imread(path_img)
 
-	# res = cv.resize(img,None,fx=0.25, fy=0.25, interpolation = cv.INTER_CUBIC)
+	# fator = 8
+
+	# res = cv.resize(img,None,fx=1./fator, fy=1./fator, interpolation = cv.INTER_CUBIC)
 	
 
 	# gray = cv.cvtColor(res,cv.COLOR_BGR2GRAY)
@@ -544,41 +896,11 @@ if __name__=="__main__":
 	# windowsize_c = size_block(res)[1]
 
 
-	# window = blocos_16_16(gray,windowsize_r,windowsize_c)
-
-	# # window_2 = blocos_16_16(lab[:,:,1],windowsize_r,windowsize_c)
-
-	# # window_3 = blocos_16_16(lab[:,:,2],windowsize_r,windowsize_c)
+	# window, loc_blocos = blocos_16_16(gray,windowsize_r,windowsize_c)
 
 	# features = features_extraction(window,3)
 
-	# show_features_1d_1(features)
-	# # print "Nfeatures",features.shape
-	# # print features[:,0]
-
-	# show_features_3d(features)
-
-	# #Mostrar os blocks:
-	# print "Resolução Imagem",res.shape
-	# print "Dimensao dos blocos", window[0].shape
-	# for i in range(len(window)):
-	# 	print i
-	# 	showimg("Block Original",resize(window[i],window[i].shape[0],window[i].shape[1]))
-		
-	# 	glcm = greycomatrix(window[i], [1], [3*np.pi/4], symmetric=True, normed=True)
-	# 	print "Media       Desvio        Contraste"
-	# 	print np.array([np.mean(window[i]),np.std(window[i]),greycoprops(glcm, 'contrast')[0, 0]])
-	# showimg("Original",res)
-
-	# ground_truth = ground_truth_filter(features,window)
-	# write_ground("ground_truth_images.pickle","images/Frame4514.jpg",ground_truth)
-	# show_features_3d(features)
-
-	# zeros,ground_truth = features_filter(features,window,3)
-
-	# print features
-	# print ground_truth
-	# show_features_3d_2(features,ground_truth)
+	# mostrar_blocos(res,window)
 	
 	# ground_truth = groundtruth(window)
 	# ground_truth = trans_class(ground_truth)
@@ -628,13 +950,19 @@ if __name__=="__main__":
 	# print "Number of Support Vectors", classi.support_vectors_
 
 	# zeros = reconstruct_GT_aux(ground_truth,window, features)
-	# zeros = reconstruct_GT_aux(predi,window, features)
+	# zeros, idx_true = reconstruct_GT_aux(predi,window, features)
 
 	# image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
-	# contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
+	# locations = ajuste_bloco(loc_blocos, idx_true, gray, windowsize_r, windowsize_c)
+
+	# print pontos_medios(locations[0],locations[1])
+	# image_reconstructed = nova_mascara(locations,gray,windowsize_r,windowsize_c)
+
+	# contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+	
 	# # # # print "Antes",contours
-	# cv.drawContours(img, np.multiply(contours,4), -1, (0,0,255), 2)
+	# cv.drawContours(img, np.multiply(contours,fator), -1, (0,0,255), 2)
 	# # # # print "Depois",contours*2
 
 	# cv.imshow("Imagem Reconstruida",img)
