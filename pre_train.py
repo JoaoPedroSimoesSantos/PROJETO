@@ -381,7 +381,7 @@ def process_video(video,out,classi, windowsize_r, windowsize_c):
 		ret, frame = video.read()
 		idx+=1
 
-		if(idx >= 115):
+		if(idx >= 0):
 			print "Frame -------------------------------------------------------------", idx
 			t0 = time.time()
 			if(381 <= idx <= 665 or 1141 <= idx <= 3070 or 3291 <= idx <= 3880 or 4771 <= idx <= 5752):
@@ -394,7 +394,7 @@ def process_video(video,out,classi, windowsize_r, windowsize_c):
 				old_blocos_true = []
 				old_locations = []
 				blocos_desaparecidos = []
-			if(idx%10 == 0):
+			if(idx%10 == 0): ### 10 EM 10 FRAMES DESAPARECEM
 				blocos_desaparecidos = []
 
 			t1 = time.time() -t0
@@ -476,7 +476,7 @@ def process_video(video,out,classi, windowsize_r, windowsize_c):
 			# print "Contours", t15
 			# print "Draw", t17
 			cv.imshow("Imagem Reconstuida",frame)
-			# out.write(frame)
+			out.write(frame)
 		
 
 		if cv.waitKey(30) & 0xff == ord('q') or idx == 3650:
@@ -689,6 +689,15 @@ def add_locations(locations1,locations2):
 
 def remover_desaparecidos(blocos_desaparecidos,idx_remover):
 
+
+	for bloco1 in idx_remover:
+		k = 0
+		for bloco2 in idx_remover:
+			if(bloco1==bloco2):
+				k+=1
+			if(k==2):
+				idx_remover.remove(bloco1)
+
 	for idx in idx_remover:
 		blocos_desaparecidos.remove(idx)
 
@@ -794,6 +803,8 @@ def tracking(old_blocos,new_blocos,old_locations,blocos_desaparecidos,gray,objec
 		if(len(new_blocos)!=0):
 			print "NEWBLOCO != 0"
 			print " "
+
+			blocos = new_blocos
 			for i in range(len(old_blocos)):
 				k = len(new_blocos)
 				for j in range(len(new_blocos)):
@@ -803,7 +814,7 @@ def tracking(old_blocos,new_blocos,old_locations,blocos_desaparecidos,gray,objec
 					if(proximidade == True):
 						print "NEWBLOCO PROXIMO OLDBLOCO"
 						print " "
-						blocos.append(new_blocos[j])
+						# blocos.append(new_blocos[j])
 						k +=1
 					k -=1
 					if(k==0): ### AINDA NAO SEI SE DEVA FAZER ESTA PROXIMIDADE DE LOCATIONS AQUI
