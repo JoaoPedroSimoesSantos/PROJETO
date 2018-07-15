@@ -421,37 +421,37 @@ def process_video(video,out,classi, windowsize_r, windowsize_c):
 			t9 = time.time() - t8
 
 			t10 = time.time()
-			# zeros, idx_true = reconstruct_GT_aux(predi,window,features)
-			zeros, blocos_true = reconstruct_GT_aux(predi,window,features)
+			zeros, idx_true = reconstruct_GT_aux(predi,window,features)
+			# zeros, blocos_true = reconstruct_GT_aux(predi,window,features)
 
-			print "NEW Blocos ----> ", blocos_true
+			# print "NEW Blocos ----> ", blocos_true
 
-			if(len(old_blocos_true)!=0 or len(blocos_true)!=0):
-				old_blocos_true,old_locations, blocos_desaparecidos, idx_remover = tracking(old_blocos_true,blocos_true,old_locations,blocos_desaparecidos,gray,loc_blocos,windowsize_r, windowsize_c)
-				blocos_desaparecidos = remover_desaparecidos(blocos_desaparecidos,idx_remover)
-			if(len(old_locations)!=0):
-				old_locations = ajuste_locations(old_locations,blocos_desaparecidos,gray,windowsize_r,windowsize_c)
+			# if(len(old_blocos_true)!=0 or len(blocos_true)!=0):
+			# 	old_blocos_true,old_locations, blocos_desaparecidos, idx_remover = tracking(old_blocos_true,blocos_true,old_locations,blocos_desaparecidos,gray,loc_blocos,windowsize_r, windowsize_c)
+			# 	blocos_desaparecidos = remover_desaparecidos(blocos_desaparecidos,idx_remover)
+			# if(len(old_locations)!=0):
+			# 	old_locations = ajuste_locations(old_locations,blocos_desaparecidos,gray,windowsize_r,windowsize_c)
 			
-			print "--------------"
-			print "OLD Blocos SAIDA ----> ",old_blocos_true
-			print "OLD LOCATIONS SAIDA ---->",old_locations
-			print "BLOCOS DESAPARECIDOS ---->", blocos_desaparecidos
-			print "--------------"
+			# print "--------------"
+			# print "OLD Blocos SAIDA ----> ",old_blocos_true
+			# print "OLD LOCATIONS SAIDA ---->",old_locations
+			# print "BLOCOS DESAPARECIDOS ---->", blocos_desaparecidos
+			# print "--------------"
 
 			# zeros = reconstruct_GT_aux(ground_truth,window)
 			t11 = time.time() - t10
 
 			t12 = time.time()
-			# image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
+			image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
 			# locations = ajuste_bloco(loc_blocos, idx_true, gray, windowsize_r, windowsize_c)
-			locations = ajuste_bloco(loc_blocos, old_blocos_true, gray, windowsize_r, windowsize_c)
+			# locations = ajuste_bloco(loc_blocos, old_blocos_true, gray, windowsize_r, windowsize_c)
 			# print "LOCATIONS PARA A MASCARA 0 --> ", locations
-			if(len(old_locations)!= 0):
-				print "LOCATIONS PARA ADICIONAR---> ", old_locations
-				locations = add_locations(old_locations,locations)
+			# if(len(old_locations)!= 0):
+			# 	print "LOCATIONS PARA ADICIONAR---> ", old_locations
+			# 	locations = add_locations(old_locations,locations)
 			# 	print "LOCATIONS PARA A MASCARA 1 --> ", locations 
-			print "LOCATIONS PARA A MASCARA 2 --> ", locations
-			image_reconstructed = nova_mascara(locations,gray,windowsize_r,windowsize_c)
+			# print "LOCATIONS PARA A MASCARA 2 --> ", locations
+			# image_reconstructed = nova_mascara(locations,gray,windowsize_r,windowsize_c)
 			t13 = time.time() - t12
 
 			t14 = time.time()
@@ -876,7 +876,7 @@ if __name__=="__main__":
 	cap = cv.VideoCapture('images/video_salvamento_aquatico.mp4')
 
 
-	out = cv.VideoWriter('images/frames_processadas.avi', cv.cv.CV_FOURCC('X','V','I','D'), 20, (1280,720))
+	out = cv.VideoWriter('images/frames_processadas_2.avi', cv.cv.CV_FOURCC('X','V','I','D'), 20, (1280,720))
 	# out = 0
 	dic = read_file("train_pickle.p")
 	old_feat = dic["features"]
