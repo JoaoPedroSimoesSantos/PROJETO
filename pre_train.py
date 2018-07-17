@@ -108,7 +108,7 @@ def invers_blocos_16x16(blocos,window,windowsize_r,windowsize_c):
 	for i in range(0,image_reconstructed.shape[0],windowsize_r):
 	    for j in range(0,image_reconstructed.shape[1],windowsize_c):
 
-	        image_reconstructed[i:i+windowsize_r,j:j+windowsize_c] = blocos[0][k]
+	        image_reconstructed[i:i+windowsize_r,j:j+windowsize_c] = blocos[k]
 	        k+=1
 	return np.uint8(image_reconstructed)
 
@@ -331,7 +331,7 @@ def groundtruth(window,path):
 	# 		groundtruth[i] = 3
 
 	#Frame 117
-	if(path == "images/Frame117.jpg"):
+	if(path == "images/Frame117.jpg"): ####ESTA E A MELHOR FRAME PARA EXPLICARMOS O NOSSO PROBLEMA COM O ENQUADRAMENTO
 		groundtruth[350] = 2
 		groundtruth[351] = 2
 		groundtruth[390] = 2
@@ -401,6 +401,16 @@ def groundtruth(window,path):
 	elif(path == "images/Frame503.jpg"):
 		groundtruth[68] = 2
 		groundtruth[90] = 2
+
+	#Frame 679
+	elif(path == "images/Frame673.jpg"):
+		# groundtruth[728] = 2
+		groundtruth[768] = 2
+
+	#Frame 679
+	elif(path == "images/Frame676.jpg"):
+		groundtruth[728] = 2
+		groundtruth[729] = 2
 
 	#Frame 679
 	elif(path == "images/Frame679.jpg"):
@@ -475,10 +485,28 @@ def groundtruth(window,path):
 		groundtruth[105] = 2
 		groundtruth[125] = 2
 
+
+	#Frame 2494
+	elif(path == "images/Frame_salvamento2494.jpg"):
+		groundtruth[109] = 2
+		# groundtruth[110] = 2
+
+	#Frame 2497
+	elif(path == "images/Frame_salvamento2497.jpg"):
+		groundtruth[109] = 2
+		# groundtruth[110] = 2
+
 	#Frame 2500
 	elif(path == "images/Frame_salvamento2500.jpg"):
 		groundtruth[109] = 2
-		groundtruth[110] = 2
+		# groundtruth[110] = 2
+
+	#Frame 2503
+	elif(path == "images/Frame_salvamento2503.jpg"):
+		groundtruth[109] = 2
+		# groundtruth[110] = 2
+		groundtruth[129] = 2
+		# groundtruth[130] = 2
 
 	#Frame 3600
 	elif(path == "images/Frame3600.jpg"):
@@ -525,7 +553,7 @@ def process_video(video,out,classi, windowsize_r, windowsize_c):
 		ret, frame = video.read()
 		idx+=1
 
-		if(idx >= 1870):
+		if(idx >= 0):
 			print "Frame -------------------------------------------------------------", idx
 			t0 = time.time()
 			if(381 <= idx <= 665 or 1141 <= idx <= 3070 or 3291 <= idx <= 3880 or 4771 <= idx <= 5752):
@@ -568,35 +596,35 @@ def process_video(video,out,classi, windowsize_r, windowsize_c):
 			# zeros, idx_true = reconstruct_GT_aux(predi,window,features)
 			zeros, blocos_true = reconstruct_GT_aux(predi,window,features)
 
-			print "NEW Blocos ----> ", blocos_true
+			# print "NEW Blocos ----> ", blocos_true
 
-			if(len(old_blocos_true)!=0 or len(blocos_true)!=0):
-				old_blocos_true,old_locations, blocos_desaparecidos, idx_remover = tracking(old_blocos_true,blocos_true,old_locations,blocos_desaparecidos,gray,loc_blocos,windowsize_r, windowsize_c)
-				blocos_desaparecidos = remover_desaparecidos(blocos_desaparecidos,idx_remover)
-			if(len(old_locations)!=0):
-				old_locations = ajuste_locations(old_locations,blocos_desaparecidos,gray,windowsize_r,windowsize_c)
+			# if(len(old_blocos_true)!=0 or len(blocos_true)!=0):
+			# 	old_blocos_true,old_locations, blocos_desaparecidos, idx_remover = tracking(old_blocos_true,blocos_true,old_locations,blocos_desaparecidos,gray,loc_blocos,windowsize_r, windowsize_c)
+			# 	blocos_desaparecidos = remover_desaparecidos(blocos_desaparecidos,idx_remover)
+			# if(len(old_locations)!=0):
+			# 	old_locations = ajuste_locations(old_locations,blocos_desaparecidos,gray,windowsize_r,windowsize_c)
 			
-			print "--------------"
-			print "OLD Blocos SAIDA ----> ",old_blocos_true
-			print "OLD LOCATIONS SAIDA ---->",old_locations
-			print "BLOCOS DESAPARECIDOS ---->", blocos_desaparecidos
-			print "--------------"
+			# print "--------------"
+			# print "OLD Blocos SAIDA ----> ",old_blocos_true
+			# print "OLD LOCATIONS SAIDA ---->",old_locations
+			# print "BLOCOS DESAPARECIDOS ---->", blocos_desaparecidos
+			# print "--------------"
 
 			# zeros = reconstruct_GT_aux(ground_truth,window)
 			t11 = time.time() - t10
 
 			t12 = time.time()
-			# image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
+			image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
 			# locations = ajuste_bloco(loc_blocos, idx_true, gray, windowsize_r, windowsize_c)
-			locations = ajuste_bloco(loc_blocos, old_blocos_true, gray, windowsize_r, windowsize_c)
+			# locations = ajuste_bloco(loc_blocos, old_blocos_true, gray, windowsize_r, windowsize_c)
 			# print "LOCATIONS PARA A MASCARA 0 --> ", locations
-			if(len(old_locations)!= 0):
-				print "LOCATIONS PARA ADICIONAR---> ", old_locations
-				locations = add_locations(old_locations,locations)
-			# 	print "LOCATIONS PARA A MASCARA 1 --> ", locations 
-			print "LOCATIONS PARA A MASCARA 2 --> ", locations
-			image_reconstructed = nova_mascara(locations,gray,windowsize_r,windowsize_c)
-			t13 = time.time() - t12
+			# if(len(old_locations)!= 0):
+			# 	print "LOCATIONS PARA ADICIONAR---> ", old_locations
+			# 	locations = add_locations(old_locations,locations)
+			# # 	print "LOCATIONS PARA A MASCARA 1 --> ", locations 
+			# print "LOCATIONS PARA A MASCARA 2 --> ", locations
+			# image_reconstructed = nova_mascara(locations,gray,windowsize_r,windowsize_c)
+			# t13 = time.time() - t12
 
 			t14 = time.time()
 			contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
@@ -604,10 +632,10 @@ def process_video(video,out,classi, windowsize_r, windowsize_c):
 
 			t16 = time.time() 
 			if(381 <= idx <= 665 or 1141 <= idx <= 3070 or 3291 <= idx <= 3880 or 4771 <= idx <= 5752):
-				cv.drawContours(frame, np.multiply(contours,8), -1, (0,0,255), 2)
+				cv.drawContours(frame, np.multiply(contours,8)+8, -1, (0,0,255), 2)
 
 			elif(0 <= idx <= 380 or 666 <= idx <= 1140 or 3071 <= idx <= 3290 or 3881 <= idx <= 4770):
-				cv.drawContours(frame, np.multiply(contours,4), -1, (0,0,255), 2)
+				cv.drawContours(frame, np.multiply(contours,4)+4, -1, (0,0,255), 2)
 			t17 = time.time() - t16
 
 			# print "Resize", t1
@@ -620,10 +648,10 @@ def process_video(video,out,classi, windowsize_r, windowsize_c):
 			# print "Contours", t15
 			# print "Draw", t17
 			cv.imshow("Imagem Reconstuida",frame)
-			# out.write(frame)
+			out.write(frame)
 		
 
-		if cv.waitKey(30) & 0xff == ord('q') or idx == 3650:
+		if cv.waitKey(30) & 0xff == ord('q'):
 			break    
 
 	video.release()
@@ -995,50 +1023,50 @@ if __name__=="__main__":
 
 	# plt.clf()
 
-	# cap = cv.VideoCapture('images/video_salvamento_aquatico.mp4')
+	cap = cv.VideoCapture('images/video_salvamento_aquatico.mp4')
 
 
-	# out = cv.VideoWriter('images/belele.avi', cv.cv.CV_FOURCC('X','V','I','D'), 20, (1280,720))
-	# # out = 0
-	# dic = read_file("train_pickle.p")
-	# old_feat = dic["features"]
-	# old_gt = dic["ground_truth"]
+	out = cv.VideoWriter('images/belele.avi', cv.cv.CV_FOURCC('X','V','I','D'), 20, (1280,720))
+	# out = 0
+	dic = read_file("train_pickle.p")
+	old_feat = dic["features"]
+	old_gt = dic["ground_truth"]
 
-	# show_features_3d_2(old_feat,old_gt)
+	show_features_3d_2(old_feat,old_gt)
 
-	# classifier = SVC(kernel = 'linear', C = 1.0)
-	# classi = classificator_train(classifier,old_feat,old_gt)
+	classifier = SVC(kernel = 'linear', C = 1.0)
+	classi = classificator_train(classifier,old_feat,old_gt)
 
-	# process_video(cap,out,classi, size_block_video(cap)[0], size_block_video(cap)[1])
+	process_video(cap,out,classi, size_block_video(cap)[0], size_block_video(cap)[1])
 
 
 	# img = cv.imread("images/seagull_database_vis002_small.png")
 	# path_img = "images/Frame_salvamento1901.jpg"
-	path_img = "images/Frame126.jpg"
-	img = cv.imread(path_img)
+	# path_img = "images/Frame117.jpg"
+	# img = cv.imread(path_img)
 
-	fator = 4
+	# fator = 4
 
-	res = cv.resize(img,None,fx=1./fator, fy=1./fator, interpolation = cv.INTER_CUBIC)
+	# res = cv.resize(img,None,fx=1./fator, fy=1./fator, interpolation = cv.INTER_CUBIC)
 
-	gray = cv.cvtColor(res,cv.COLOR_BGR2GRAY)
+	# gray = cv.cvtColor(res,cv.COLOR_BGR2GRAY)
 
-	windowsize_r = size_block(res)[0]
-	windowsize_c = size_block(res)[1]
+	# windowsize_r = size_block(res)[0]
+	# windowsize_c = size_block(res)[1]
 
-	window, loc_blocos = divisao_de_blocos(gray,windowsize_r,windowsize_c)
+	# window, loc_blocos = divisao_de_blocos(gray,windowsize_r,windowsize_c)
 
-	features = features_extraction(window,3)
+	# features = features_extraction(window,3)
 
 
 	# mostrar_blocos(res,window)
 	
-	ground_truth = groundtruth(window,path_img)
-	ground_truth = trans_class(ground_truth)
+	# ground_truth = groundtruth(window,path_img)
+	# ground_truth = trans_class(ground_truth)
 
-	update_pickle("ground_truth.p",path_img,ground_truth)
-	dic = read_file("ground_truth.p")
-	print dic
+	# update_pickle("ground_truth.p",path_img,ground_truth)
+	# dic = read_file("ground_truth.p")
+	# print dic[path_img]
 
 	# print ground_truth
 	# # print ground_truth.shape
@@ -1065,23 +1093,23 @@ if __name__=="__main__":
 
 	# feat = read_or_write_pickle("3features_train_ship_3Classes.pickle",features,ground_truth,"Erro")
 	# zeros = reconstruct_GT_aux(predi,window)
-	dic = read_file("train_pickle.p")
-	old_feat = dic["features"]
-	old_gt = dic["ground_truth"]
+	# dic = read_file("train_pickle.p")
+	# old_feat = dic["features"]
+	# old_gt = dic["ground_truth"]
 
 	# show_features_3d_2(old_feat,old_gt)
 	# show_features_3d_3(old_feat,old_gt, features)
 	# print old_feat.shape
 	# # print old_gt
 
-	classifier = SVC(kernel = 'linear', C = 1.0)
-	classi = classificator_train(classifier,old_feat,old_gt)
-	predi = classificator_test(classi,features)
+	# classifier = SVC(kernel = 'linear', C = 1.0)
+	# classi = classificator_train(classifier,old_feat,old_gt)
+	# predi = classificator_test(classi,features)
 
 	# write_file("predict.p",dict())
 	# update_pickle("predict.p",path_img,predi)
 	# dic = read_file("predict.p")
-	# print dic[path_img].shape
+	# print dic[path_img]
 
 	# metrica(window,ground_truth,predi)
 
@@ -1097,29 +1125,30 @@ if __name__=="__main__":
 	# print "Coef1", classi.coef_
 	# print "Number of Support Vectors", classi.support_vectors_
 
-	zeros = reconstruct_GT_aux(ground_truth,window,features)
+	# zeros = reconstruct_GT_aux(ground_truth,window,features)
 	# zeros, idx_true = reconstruct_GT_aux(predi,window, features)
 
-	image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
+	# image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
 
 	# # locations = ajuste_bloco(loc_blocos, idx_true, gray, windowsize_r, windowsize_c)
 
 	# # print pontos_medios(locations[0],locations[1])
 	# # image_reconstructed = nova_mascara(locations,gray,windowsize_r,windowsize_c)
 
-	contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+	# contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 	
 	# # # # # print "Antes",contours
-	cv.drawContours(img, np.multiply(contours,fator), -1, (0,0,255), 2)
+	# cv.drawContours(img, np.multiply(contours,fator)+8, -1, (0,0,255), 2)
 	# # # # # print "Depois",contours*2
 
-	cv.imshow("Imagem Reconstruida",img)
-	cv.waitKey(0)
-	cv.destroyAllWindows()
+	# cv.imshow("Imagem Reconstruida",img)
+	# cv.waitKey(0)
+	# cv.destroyAllWindows()
 
 
 	# #Metricas
 	# path_array_img = ["images/Frame123.jpg","images/Frame500.jpg","images/Frame679.jpg","images/Frame_salvamento1207.jpg","images/Frame_salvamento1890.jpg","images/Frame_salvamento1898.jpg","images/Frame_salvamento2500.jpg","images/Frame3600.jpg","images/Frame3734.jpg","images/Frame4527.jpg"]
+	# path_array_img = ["images/Frame117.jpg","images/Frame120.jpg","images/Frame123.jpg","images/Frame126.jpg"]
 
 	# gt,predi = read_gt_predi(path_array_img)
 
