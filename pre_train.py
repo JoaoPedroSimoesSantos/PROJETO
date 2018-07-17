@@ -330,10 +330,28 @@ def groundtruth(window,path):
 	# 	else:
 	# 		groundtruth[i] = 3
 
-	#Frame 123
-	if(path == "images/Frame123.jpg"):
+	#Frame 117
+	if(path == "images/Frame117.jpg"):
 		groundtruth[350] = 2
 		groundtruth[351] = 2
+		groundtruth[390] = 2
+		groundtruth[391] = 2
+		groundtruth[607] = 2
+		groundtruth[646] = 2
+		groundtruth[647] = 2
+
+
+	#Frame 120
+	if(path == "images/Frame120.jpg"):
+		groundtruth[351] = 2
+		groundtruth[390] = 2
+		groundtruth[391] = 2
+		groundtruth[608] = 2
+		groundtruth[647] = 2
+		groundtruth[648] = 2
+
+	#Frame 123
+	if(path == "images/Frame123.jpg"):
 		groundtruth[390] = 2
 		groundtruth[391] = 2
 		groundtruth[608] = 2
@@ -359,8 +377,6 @@ def groundtruth(window,path):
 
 	#Frame 126
 	elif(path == "images/Frame126.jpg"):
-		groundtruth[350] = 2
-		groundtruth[351] = 2
 		groundtruth[390] = 2
 		groundtruth[391] = 2
 		groundtruth[608] = 2
@@ -997,11 +1013,11 @@ if __name__=="__main__":
 
 
 	# img = cv.imread("images/seagull_database_vis002_small.png")
-	path_img = "images/Frame_salvamento1901.jpg"
-	# path_img = "images/Frame4527.jpg"
+	# path_img = "images/Frame_salvamento1901.jpg"
+	path_img = "images/Frame126.jpg"
 	img = cv.imread(path_img)
 
-	fator = 8
+	fator = 4
 
 	res = cv.resize(img,None,fx=1./fator, fy=1./fator, interpolation = cv.INTER_CUBIC)
 
@@ -1020,7 +1036,7 @@ if __name__=="__main__":
 	ground_truth = groundtruth(window,path_img)
 	ground_truth = trans_class(ground_truth)
 
-	# update_pickle("ground_truth.p",path_img,ground_truth)
+	update_pickle("ground_truth.p",path_img,ground_truth)
 	dic = read_file("ground_truth.p")
 	print dic
 
