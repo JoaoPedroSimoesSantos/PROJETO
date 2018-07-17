@@ -19,12 +19,12 @@ while(cap.isOpened()):
     i += 1
     print "Frame ", i
     # Display the resulting frame
-    if 675 <= i < 680:
+    if 2494 <= i < 2498:
       cv.imshow('Frame',cv.resize(frame,None,fx = 0.5,fy = 0.5))
       cv.imwrite("Frame" + str(i) + ".jpg",frame)
  
     # Press Q on keyboard to  exit
-    if cv.waitKey(25) & 0xFF == ord('q') or i == 680:
+    if cv.waitKey(25) & 0xFF == ord('q') or i == 2498:
       break
  
   # Break the loop
