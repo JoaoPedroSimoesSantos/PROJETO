@@ -6,7 +6,8 @@ import math
 
 from skimage.feature import greycomatrix, greycoprops
 from skimage import data
-from sklearn.metrics.cluster import entropy
+from sklearn.metrics import confusion_matrix
+import itertools
 
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -89,9 +90,9 @@ def reconstruct_GT_aux(ground_truth,window,features):
 	for i in range(len(ground_truth)):
 
 		if(ground_truth[i] == 1):
-			booleana = ajuste_ground_truth(i,window)
+			# booleana = ajuste_ground_truth(i,window)
 
-			if(booleana):
+			# if(booleana):
 				zeros[i] = np.array([[255]*window[i].shape[1]]*window[i].shape[0])
 				idx_true.append(i)
 
@@ -107,7 +108,7 @@ def invers_blocos_16x16(blocos,window,windowsize_r,windowsize_c):
 	for i in range(0,image_reconstructed.shape[0],windowsize_r):
 	    for j in range(0,image_reconstructed.shape[1],windowsize_c):
 
-	        image_reconstructed[i:i+windowsize_r,j:j+windowsize_c] = blocos[k]
+	        image_reconstructed[i:i+windowsize_r,j:j+windowsize_c] = blocos[0][k]
 	        k+=1
 	return np.uint8(image_reconstructed)
 
@@ -271,7 +272,7 @@ def showimg(title, img):
 def resize(img,vx,vy):
 	return cv.resize(img,None,fx=vx, fy=vy, interpolation = cv.INTER_CUBIC)
 
-def groundtruth(window):
+def groundtruth(window,path):
 
 	groundtruth = np.zeros(len(window))
 
@@ -329,14 +330,145 @@ def groundtruth(window):
 	# 	else:
 	# 		groundtruth[i] = 3
 
-	# #Frame 119
-	# for i in range(len(window)):
-	# 	if(0 <= i < 45 ):
-	# 		groundtruth[i] = 1
-	# 	elif():
-	# 		groundtruth[i] = 3
-	# 	elif( 45 <=i < 46):
-	# 		groundtruth[i] = 2
+	#Frame 123
+	if(path == "images/Frame123.jpg"):
+		groundtruth[350] = 2
+		groundtruth[351] = 2
+		groundtruth[390] = 2
+		groundtruth[391] = 2
+		groundtruth[608] = 2
+		groundtruth[609] = 2
+
+	#Frame 124
+	elif(path == "images/Frame124.jpg"):
+		groundtruth[350] = 2
+		groundtruth[351] = 2
+		groundtruth[390] = 2
+		groundtruth[391] = 2
+		groundtruth[608] = 2
+		groundtruth[609] = 2
+
+	#Frame 125
+	elif(path == "images/Frame125.jpg"):
+		groundtruth[350] = 2
+		groundtruth[351] = 2
+		groundtruth[390] = 2
+		groundtruth[391] = 2
+		groundtruth[608] = 2
+		groundtruth[609] = 2
+
+	#Frame 126
+	elif(path == "images/Frame126.jpg"):
+		groundtruth[350] = 2
+		groundtruth[351] = 2
+		groundtruth[390] = 2
+		groundtruth[391] = 2
+		groundtruth[608] = 2
+		groundtruth[609] = 2
+
+	#Frame 500
+	elif(path == "images/Frame500.jpg"):
+		groundtruth[68] = 2
+		groundtruth[90] = 2
+
+	#Frame 501
+	elif(path == "images/Frame501.jpg"):
+		groundtruth[68] = 2
+		groundtruth[90] = 2
+
+	#Frame 502
+	elif(path == "images/Frame502.jpg"):
+		groundtruth[68] = 2
+		groundtruth[90] = 2
+
+	#Frame 503
+	elif(path == "images/Frame503.jpg"):
+		groundtruth[68] = 2
+		groundtruth[90] = 2
+
+	#Frame 679
+	elif(path == "images/Frame679.jpg"):
+		groundtruth[689] = 2
+		groundtruth[729] = 2
+
+	#Frame 680
+	elif(path == "images/Frame680.jpg"):
+		groundtruth[689] = 2
+		groundtruth[729] = 2
+
+	#Frame 681
+	elif(path == "images/Frame681.jpg"):
+		groundtruth[689] = 2
+
+	#Frame 682
+	elif(path == "images/Frame682.jpg"):
+		groundtruth[689] = 2
+		groundtruth[777] = 2
+
+	#Frame 1207
+	elif(path == "images/Frame_salvamento1207.jpg"):
+		groundtruth[90] = 2
+
+	#Frame 1208
+	elif(path == "images/Frame_salvamento1208.jpg"):
+		groundtruth[90] = 2
+
+	#Frame 1209
+	elif(path == "images/Frame_salvamento1209.jpg"):
+		groundtruth[90] = 2
+
+	#Frame 1210
+	elif(path == "images/Frame_salvamento1210.jpg"):
+		groundtruth[90] = 2
+
+	#Frame 1890
+	elif(path == "images/Frame_salvamento1890.jpg"):
+		groundtruth[34] = 2
+		groundtruth[125] = 2
+
+	#Frame 1891
+	elif(path == "images/Frame_salvamento1891.jpg"):
+		groundtruth[34] = 2
+		groundtruth[125] = 2
+
+	#Frame 1892
+	elif(path == "images/Frame_salvamento1892.jpg"):
+		groundtruth[34] = 2
+		groundtruth[125] = 2
+
+	#Frame 1893
+	elif(path == "images/Frame_salvamento1893.jpg"):
+		groundtruth[34] = 2
+		groundtruth[125] = 2
+
+	#Frame 1898
+	elif(path == "images/Frame_salvamento1898.jpg"):
+		groundtruth[105] = 2
+		groundtruth[125] = 2
+
+	#Frame 2500
+	elif(path == "images/Frame_salvamento2500.jpg"):
+		groundtruth[109] = 2
+		groundtruth[110] = 2
+
+	#Frame 3600
+	elif(path == "images/Frame3600.jpg"):
+		groundtruth[26] = 2
+		groundtruth[46] = 2
+		groundtruth[47] = 2
+		groundtruth[90] = 2
+		groundtruth[91] = 2
+
+	#Frame 3734
+	elif(path == "images/Frame3734.jpg"):
+		groundtruth[85] = 2
+
+	#Frame 4527
+	elif(path == "images/Frame4527.jpg"):
+		groundtruth[86] = 2
+		groundtruth[178] = 2
+		groundtruth[179] = 2
+		groundtruth[547] = 2
 
 	return groundtruth
 
@@ -344,7 +476,7 @@ def trans_class(groundtruth):
 
 	for i in range(len(groundtruth)):
 
-		if(groundtruth[i] == 0 or groundtruth[i] == 1 or groundtruth[i] == 3):
+		if(groundtruth[i] == 0 or groundtruth[i] == 1 or groundtruth[i] == 3 or groundtruth[i] == 4):
 
 			groundtruth[i] = 0
 
@@ -471,7 +603,7 @@ def process_video(video,out,classi, windowsize_r, windowsize_c):
 def mostrar_blocos(res,window):
 
 	#Mostrar os blocks:
-	print "Resolução Imagem",res.shape
+	print "Resolucao Imagem",res.shape
 	print "Dimensao dos blocos", window[0].shape
 	for i in range(len(window)):
 		print i
@@ -794,12 +926,40 @@ def tracking(old_blocos,new_blocos,old_locations,blocos_desaparecidos,gray,objec
 			blocos = new_blocos
 
 	return blocos, old_locations, blocos_desaparecidos, idx_remover
-					
-					
 
-		
+def metrica(window,groundthruthTrue,groundthruthEst):
+	conf = confusion_matrix(groundthruthTrue, groundthruthEst)
+	print conf
 
+	tn, fp, fn, tp = conf.ravel()
 
+	print tn
+	print fp
+	print fn
+	print tp
+
+	accuracy = (float)(tp + tn)/(groundthruthTrue.shape[0] + groundthruthEst.shape[0])
+	precision = tp / (float)(tp + fp) 
+	recall = tp / (float)(tp + fn)
+	f_score = 2*((precision*recall)/(precision+recall))
+
+	print "accuracy:", accuracy
+	print "precision:", precision	
+	print "recall:", recall
+	print "f_score:", f_score
+
+def read_gt_predi(path):
+	gt_class = np.array([])
+	predic_class = np.array([])
+
+	gt = read_file("ground_truth.p")
+	predi = read_file("predict.p")
+
+	for i in range(len(path)):
+		gt_class = np.append(gt_class,gt[path[i]])
+		predic_class = np.append(predic_class,predi[path[i]])
+
+	return gt_class,predic_class
 
 
 if __name__=="__main__":
@@ -824,30 +984,34 @@ if __name__=="__main__":
 
 
 	# img = cv.imread("images/seagull_database_vis002_small.png")
-	path_img = "images/Frame602.jpg"
+	# path_img = "images/Frame_salvamento2500.jpg"
+	path_img = "images/Frame4527.jpg"
 	img = cv.imread(path_img)
 
-	fator = 8
+	fator = 4
 
 	res = cv.resize(img,None,fx=1./fator, fy=1./fator, interpolation = cv.INTER_CUBIC)
-	
 
 	gray = cv.cvtColor(res,cv.COLOR_BGR2GRAY)
-	# lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
-	
 
 	windowsize_r = size_block(res)[0]
 	windowsize_c = size_block(res)[1]
-
 
 	window, loc_blocos = divisao_de_blocos(gray,windowsize_r,windowsize_c)
 
 	features = features_extraction(window,3)
 
+
 	# mostrar_blocos(res,window)
 	
-	# ground_truth = groundtruth(window)
-	# ground_truth = trans_class(ground_truth)
+	ground_truth = groundtruth(window,path_img)
+	ground_truth = trans_class(ground_truth)
+
+	# update_pickle("ground_truth.p",path_img,ground_truth)
+	# dic = read_file("ground_truth.p")
+	# print dic[path_img]
+
+	# print ground_truth
 	# # print ground_truth.shape
 
 	# show_features_3d_2(features,ground_truth)
@@ -885,6 +1049,17 @@ if __name__=="__main__":
 	# classi = classificator_train(classifier,old_feat,old_gt)
 	# predi = classificator_test(classi,features)
 
+	# write_file("predict.p",dict())
+	# update_pickle("predict.p",path_img,predi)
+	# dic = read_file("predict.p")
+	# print dic[path_img].shape
+
+	# metrica(window,ground_truth,predi)
+
+	# for i in range(len(predi)):
+	# 	if(predi[i] == 1):
+	# 		print i
+
 
 	# print "Acerto ", ((np.sum(predi[predi==1]))/np.sum(ground_truth[ground_truth==1]))*100 
 	# print "%"
@@ -893,23 +1068,31 @@ if __name__=="__main__":
 	# print "Coef1", classi.coef_
 	# print "Number of Support Vectors", classi.support_vectors_
 
-	# zeros = reconstruct_GT_aux(ground_truth,window, features)
+	zeros = reconstruct_GT_aux(ground_truth,window,features)
 	# zeros, idx_true = reconstruct_GT_aux(predi,window, features)
 
-	# image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
+	image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
 
-	# locations = ajuste_bloco(loc_blocos, idx_true, gray, windowsize_r, windowsize_c)
+	# # locations = ajuste_bloco(loc_blocos, idx_true, gray, windowsize_r, windowsize_c)
 
-	# print pontos_medios(locations[0],locations[1])
-	# image_reconstructed = nova_mascara(locations,gray,windowsize_r,windowsize_c)
+	# # print pontos_medios(locations[0],locations[1])
+	# # image_reconstructed = nova_mascara(locations,gray,windowsize_r,windowsize_c)
 
-	# contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+	_,contours, hierarchy = cv.findContours(image_reconstructed, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 	
-	# # # # print "Antes",contours
-	# cv.drawContours(img, np.multiply(contours,fator), -1, (0,0,255), 2)
-	# # # # print "Depois",contours*2
+	# # # # # print "Antes",contours
+	cv.drawContours(img, np.multiply(contours,fator), -1, (0,0,255), 2)
+	# # # # # print "Depois",contours*2
 
-	# cv.imshow("Imagem Reconstruida",img)
-	# cv.waitKey(0)
-	# cv.destroyAllWindows()
+	cv.imshow("Imagem Reconstruida",img)
+	cv.waitKey(0)
+	cv.destroyAllWindows()
+
+
+	# #Métricas
+	# path_array_img = ["images/Frame123.jpg","images/Frame500.jpg","images/Frame679.jpg","images/Frame_salvamento1207.jpg","images/Frame_salvamento1890.jpg","images/Frame_salvamento1898.jpg","images/Frame_salvamento2500.jpg","images/Frame3600.jpg","images/Frame3734.jpg","images/Frame4527.jpg"]
+
+	# gt,predi = read_gt_predi(path_array_img)
+
+	# metrica(window,gt,predi)
 
