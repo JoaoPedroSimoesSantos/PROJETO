@@ -19,9 +19,9 @@ PATCH_SIZE = 8
 print "PATCH_SIZE", PATCH_SIZE
 
 # img = cv.imread("images/seagull_database_vis001_small.png")
-img = cv.imread("images/Frame120.jpg")
+img = cv.imread("images/Frame3580.jpg")
 
-res = cv.resize(img,None,fx=0.25, fy=0.25, interpolation = cv.INTER_CUBIC)
+res = cv.resize(img,None,fx=0.125, fy=0.125, interpolation = cv.INTER_CUBIC)
 print "Original", img.shape
 print "Resized", res.shape
 print 
@@ -96,13 +96,13 @@ lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
 # print "Frame 3731"
 # print gray.shape
 
-# ## Frame 3580 salvamento
-# # water_locations = [(85,220),(250,300),(100,275)]
-# # water_locations = [(40,110),(125,150),(50,275)]
-# water_locations = [(20,55),(60,70),(20,130)]
-# # water_locations = [(8,25),(30,35),(10,60)]
-# print "Frame 3580"
-# print gray.shape
+## Frame 3580 salvamento
+# water_locations = [(85,220),(250,300),(100,275)]
+# water_locations = [(40,110),(125,150),(50,275)]
+water_locations = [(20,55),(60,70),(20,130)]
+# water_locations = [(8,25),(30,35),(10,60)]
+print "Frame 3580"
+print gray.shape
 
 # ## Frame 3602 salvamento
 # # water_locations = [(85,220),(250,300),(100,275)]
@@ -141,11 +141,11 @@ lab = cv.cvtColor(res,cv.COLOR_BGR2LAB)
 # print "Frame 121"
 # print gray.shape
 
-## Frame 120 salvamento
+# ## Frame 120 salvamento
 # water_locations = [(0,35),(81,248),(140,60)]
-water_locations = [(64,135),(71,135),(71,127)]
-print "Frame 120"
-print gray.shape
+# # water_locations = [(64,135),(71,135),(71,127)]
+# print "Frame 120"
+# print gray.shape
 
 # ## Frame 675 salvamento
 # # water_locations = [(0,35),(81,248),(140,60)]
@@ -162,9 +162,10 @@ xs = []
 ys = []
 zs = []
 for patch in (water_patches):
-    glcm = greycomatrix(patch, [1], [3*np.pi/4], symmetric=True, normed=True)
+    # glcm = greycomatrix(patch, [1], [3*np.pi/4], symmetric=True, normed=False)
+    glcm = greycomatrix(patch, [1], [0,np.pi/4,np.pi/2,3*np.pi/4], symmetric=True, normed=True)
     # print greycoprops(glcm, 'contrast')
-    zs.append(greycoprops(glcm, 'contrast')[0, 0])
+    zs.append(greycoprops(glcm, 'contrast')[0, 3])
     # zs.append(greycoprops(glcm, 'correlation')[0, 0])
     # zs.append(greycoprops(glcm, 'dissimilarity')[0, 0])
 
