@@ -1172,8 +1172,8 @@ if __name__=="__main__":
 	# #Metricas
 	# path_array_img = ["images/Frame123.jpg","images/Frame500.jpg","images/Frame679.jpg","images/Frame_salvamento1207.jpg","images/Frame_salvamento1890.jpg","images/Frame_salvamento1898.jpg","images/Frame_salvamento2500.jpg","images/Frame3600.jpg","images/Frame3734.jpg","images/Frame4527.jpg"]
 	# path_array_img = ["images/Frame117.jpg","images/Frame120.jpg","images/Frame123.jpg","images/Frame126.jpg","images/Frame500.jpg","images/Frame673.jpg","images/Frame676.jpg","images/Frame679.jpg","images/Frame682.jpg","images/Frame_salvamento1207.jpg","images/Frame_salvamento1892.jpg","images/Frame_salvamento1895.jpg","images/Frame_salvamento1898.jpg","images/Frame_salvamento1901.jpg","images/Frame_salvamento2494.jpg","images/Frame_salvamento2497.jpg","images/Frame_salvamento2500.jpg","images/Frame_salvamento2503.jpg","images/Frame3600.jpg","images/Frame3734.jpg","images/Frame4527.jpg"]
-	path_array_img = ["images/Frame117.jpg","images/Frame120.jpg","images/Frame123.jpg","images/Frame126.jpg"]
-	# path_array_img = ["images/Frame_salvamento2494.jpg","images/Frame_salvamento2497.jpg","images/Frame_salvamento2500.jpg","images/Frame_salvamento2503.jpg"]
+	# path_array_img = ["images/Frame117.jpg","images/Frame120.jpg","images/Frame123.jpg","images/Frame126.jpg"]
+	path_array_img = ["images/Frame_salvamento2494.jpg","images/Frame_salvamento2497.jpg","images/Frame_salvamento2500.jpg","images/Frame_salvamento2503.jpg"]
 	# path_array_img = ["images/Frame673.jpg","images/Frame676.jpg","images/Frame679.jpg","images/Frame682.jpg"]
 	# path_array_img = ["images/Frame_salvamento1892.jpg","images/Frame_salvamento1895.jpg","images/Frame_salvamento1898.jpg","images/Frame_salvamento1901.jpg"]
 
