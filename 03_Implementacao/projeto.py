@@ -91,9 +91,9 @@ def reconstruct_GT_aux(ground_truth,window,features):
 	for i in range(len(ground_truth)):
 
 		if(ground_truth[i] == 1):
-			booleana = ajuste_ground_truth(i,window)
+			# booleana = ajuste_ground_truth(i,window)
 
-			if(booleana):
+			# if(booleana):
 				zeros[i] = np.array([[255]*window[i].shape[1]]*window[i].shape[0])
 				idx_true.append(i)
 				new_gt[i] = 1
@@ -315,13 +315,14 @@ def groundtruth(window,path):
 	# 		groundtruth[i] = 2
 
 	# # #Frame 4514
-	# for i in range(len(window)):
-	# 	if(i == 0 or 2 <= i < 6 or 7 <= i < 13 or 14 <= i < 46 or 47 <= i < 54 or 55 <= i < 139 or 140 <= i < 361 or 362 <= i < 389 or 390 <= i < 395 or 398 <= i < 430 or i == 433 or 438 <= i < 487 or 488 <= i < 548 or 549 <= i < 582 or 583 <= i < 595 or 596 <= i < 635 or 636 <= i < 672 or 674 <= i < 693 or 697 <= i < 708 or 709 <= i < 720 or 723 <= i < 726 or 728 <= i < 730 or 736 <= i < 739 or 740 <= i < 756 or 757 <= i < 760 or i == 764 or 783 <= i < 788 or i >= 797):
-	# 		groundtruth[i] = 1
-	# 	elif(i == 1 or i == 6 or i == 13 or i == 54 or i == 361 or i == 389 or 395 <= i < 398 or 430 <= i < 433 or 434 <= i < 438 or i == 487 or i == 582 or i == 595 or i == 635 or 672 <= i < 674 or 693 <= i < 696 or i == 708 or 720 <= i < 723 or 726 <= i < 728 or 730 <= i < 736 or i == 739 or i == 756 or 760 <= i < 764 or 765 <= i < 783 or 788 <= i < 797):
-	# 		groundtruth[i] = 3
-	# 	elif(i == 46 or i == 139 or i == 548):
-	# 		groundtruth[i] = 2
+	# if(path == "images/Frame4514.jpg"):
+	# 	for i in range(len(window)):
+	# 		if(i == 0 or 2 <= i < 6 or 7 <= i < 13 or 14 <= i < 46 or 47 <= i < 54 or 55 <= i < 139 or 140 <= i < 361 or 362 <= i < 389 or 390 <= i < 395 or 398 <= i < 430 or i == 433 or 438 <= i < 487 or 488 <= i < 548 or 549 <= i < 582 or 583 <= i < 595 or 596 <= i < 635 or 636 <= i < 672 or 674 <= i < 693 or 697 <= i < 708 or 709 <= i < 720 or 723 <= i < 726 or 728 <= i < 730 or 736 <= i < 739 or 740 <= i < 756 or 757 <= i < 760 or i == 764 or 783 <= i < 788 or i >= 797):
+	# 			groundtruth[i] = 1
+	# 		elif(i == 1 or i == 6 or i == 13 or i == 54 or i == 361 or i == 389 or 395 <= i < 398 or 430 <= i < 433 or 434 <= i < 438 or i == 487 or i == 582 or i == 595 or i == 635 or 672 <= i < 674 or 693 <= i < 696 or i == 708 or 720 <= i < 723 or 726 <= i < 728 or 730 <= i < 736 or i == 739 or i == 756 or 760 <= i < 764 or 765 <= i < 783 or 788 <= i < 797):
+	# 			groundtruth[i] = 3
+	# 		elif(i == 46 or i == 139 or i == 548):
+	# 			groundtruth[i] = 2
 
 	# #Frame 3597
 	# for i in range(len(window)):
@@ -555,7 +556,7 @@ def process_video(video,out,classi, windowsize_r, windowsize_c):
 		ret, frame = video.read()
 		idx+=1
 
-		if(idx >= 2480):
+		if(idx >= 2490):
 			print "Frame -------------------------------------------------------------", idx
 			t0 = time.time()
 			if(381 <= idx <= 665 or 1141 <= idx <= 3070 or 3291 <= idx <= 3880 or 4771 <= idx <= 5752):
@@ -598,34 +599,34 @@ def process_video(video,out,classi, windowsize_r, windowsize_c):
 			# zeros, idx_true = reconstruct_GT_aux(predi,window,features)
 			zeros, blocos_true, new_gt = reconstruct_GT_aux(predi,window,features)
 
-			print "NEW Blocos ----> ", blocos_true
+			# print "NEW Blocos ----> ", blocos_true
 
-			if(len(old_blocos_true)!=0 or len(blocos_true)!=0):
-				old_blocos_true,old_locations, blocos_desaparecidos, idx_remover = tracking(old_blocos_true,blocos_true,old_locations,blocos_desaparecidos,gray,loc_blocos,windowsize_r, windowsize_c)
-				blocos_desaparecidos = remover_desaparecidos(blocos_desaparecidos,idx_remover)
-			if(len(old_locations)!=0):
-				old_locations = ajuste_locations(old_locations,blocos_desaparecidos,gray,windowsize_r,windowsize_c)
+			# if(len(old_blocos_true)!=0 or len(blocos_true)!=0):
+			# 	old_blocos_true,old_locations, blocos_desaparecidos, idx_remover = tracking(old_blocos_true,blocos_true,old_locations,blocos_desaparecidos,gray,loc_blocos,windowsize_r, windowsize_c)
+			# 	blocos_desaparecidos = remover_desaparecidos(blocos_desaparecidos,idx_remover)
+			# if(len(old_locations)!=0):
+			# 	old_locations = ajuste_locations(old_locations,blocos_desaparecidos,gray,windowsize_r,windowsize_c)
 			
-			print "--------------"
-			print "OLD Blocos SAIDA ----> ",old_blocos_true
-			print "OLD LOCATIONS SAIDA ---->",old_locations
-			print "BLOCOS DESAPARECIDOS ---->", blocos_desaparecidos
-			print "--------------"
+			# print "--------------"
+			# print "OLD Blocos SAIDA ----> ",old_blocos_true
+			# print "OLD LOCATIONS SAIDA ---->",old_locations
+			# print "BLOCOS DESAPARECIDOS ---->", blocos_desaparecidos
+			# print "--------------"
 
 			# zeros = reconstruct_GT_aux(ground_truth,window)
 			t11 = time.time() - t10
 
 			t12 = time.time() 
-			# image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
+			image_reconstructed = invers_blocos_16x16(zeros,gray,windowsize_r,windowsize_c)
 			# locations = ajuste_bloco(loc_blocos, idx_true, gray, windowsize_r, windowsize_c)
-			locations = ajuste_bloco(loc_blocos, old_blocos_true, gray, windowsize_r, windowsize_c)
+			# locations = ajuste_bloco(loc_blocos, old_blocos_true, gray, windowsize_r, windowsize_c)
 			# print "LOCATIONS PARA A MASCARA 0 --> ", locations
-			if(len(old_locations)!= 0):
+			# if(len(old_locations)!= 0):
 			# 	print "LOCATIONS PARA ADICIONAR---> ", old_locations
-				locations = add_locations(old_locations,locations)
+				# locations = add_locations(old_locations,locations)
 			# # 	print "LOCATIONS PARA A MASCARA 1 --> ", locations 
-			print "LOCATIONS PARA A MASCARA 2 --> ", locations
-			image_reconstructed = nova_mascara(locations,gray,windowsize_r,windowsize_c)
+			# print "LOCATIONS PARA A MASCARA 2 --> ", locations
+			# image_reconstructed = nova_mascara(locations,gray,windowsize_r,windowsize_c)
 			# t13 = time.time() - t12
 
 			t14 = time.time()
@@ -650,10 +651,10 @@ def process_video(video,out,classi, windowsize_r, windowsize_c):
 			# print "Contours", t15
 			# print "Draw", t17
 			cv.imshow("Imagem Reconstuida",frame)
-			# out.write(frame)
+			out.write(frame)
 		
 
-		if cv.waitKey(30) & 0xff == ord('q'):
+		if cv.waitKey(30) & 0xff == ord('q') or idx == 2530:
 			break    
 
 	video.release()
@@ -1040,43 +1041,43 @@ if __name__=="__main__":
 
 	# plt.clf()
 
-	# cap = cv.VideoCapture('images/video_salvamento_aquatico.mp4')
-	# # cap = cv.VideoCapture('images/video_surf.mp4')
+	cap = cv.VideoCapture('images/video_salvamento_aquatico.mp4')
+	# cap = cv.VideoCapture('images/video_surf.mp4')
 
-	# out = cv.VideoWriter('images/nada_definido.avi', cv.cv.CV_FOURCC('X','V','I','D'), 20, (1280,720))
-	# # out = 0
-	# dic = read_file("train_pickle.p")
-	# old_feat = dic["features"]
-	# old_gt = dic["ground_truth"]
+	out = cv.VideoWriter('images/frames_2490_2530_classi.avi', cv.cv.CV_FOURCC('X','V','I','D'), 2, (1280,720))
+	# out = 0
+	dic = read_file("train_pickle.p")
+	old_feat = dic["features"]
+	old_gt = dic["ground_truth"]
 
-	# show_features_3d_2(old_feat,old_gt)
+	show_features_3d_2(old_feat,old_gt)
 
-	# classifier = SVC(kernel = 'linear', C = 1.0)
-	# classi = classificator_train(classifier,old_feat,old_gt)
+	classifier = SVC(kernel = 'linear', C = 1.0)
+	classi = classificator_train(classifier,old_feat,old_gt)
 
-	# process_video(cap,out,classi, size_block_video(cap)[0], size_block_video(cap)[1])
+	process_video(cap,out,classi, size_block_video(cap)[0], size_block_video(cap)[1])
 
 
 	# path_img = "images/seagull_database_vis002_small.png"
-	path_img = "images/Frame_salvamento1892.jpg"
-	# path_img = "images/Frame673.jpg"
-	img = cv.imread(path_img)
+	# path_img = "images/Frame_salvamento1892.jpg"
+	# path_img = "images/Frame4514.jpg"
+	# img = cv.imread(path_img)
 
-	fator = 8
+	# fator = 8
 
-	res = cv.resize(img,None,fx=1./fator, fy=1./fator, interpolation = cv.INTER_CUBIC)
+	# res = cv.resize(img,None,fx=1./fator, fy=1./fator, interpolation = cv.INTER_CUBIC)
 
-	gray = cv.cvtColor(res,cv.COLOR_BGR2GRAY)
+	# gray = cv.cvtColor(res,cv.COLOR_BGR2GRAY)
 
-	windowsize_r = size_block(res)[0]
-	windowsize_c = size_block(res)[1]
+	# windowsize_r = size_block(res)[0]
+	# windowsize_c = size_block(res)[1]
 
-	window, loc_blocos = divisao_de_blocos(gray,windowsize_r,windowsize_c)
+	# window, loc_blocos = divisao_de_blocos(gray,windowsize_r,windowsize_c)
 
-	features = features_extraction(window,3)
+	# features = features_extraction(window,3)
 
 
-	# mostrar_blocos(res,window)
+	# # mostrar_blocos(res,window)
 	
 	# ground_truth = groundtruth(window,path_img)
 	# ground_truth = trans_class(ground_truth)
@@ -1173,11 +1174,11 @@ if __name__=="__main__":
 	# path_array_img = ["images/Frame123.jpg","images/Frame500.jpg","images/Frame679.jpg","images/Frame_salvamento1207.jpg","images/Frame_salvamento1890.jpg","images/Frame_salvamento1898.jpg","images/Frame_salvamento2500.jpg","images/Frame3600.jpg","images/Frame3734.jpg","images/Frame4527.jpg"]
 	# path_array_img = ["images/Frame117.jpg","images/Frame120.jpg","images/Frame123.jpg","images/Frame126.jpg","images/Frame500.jpg","images/Frame673.jpg","images/Frame676.jpg","images/Frame679.jpg","images/Frame682.jpg","images/Frame_salvamento1207.jpg","images/Frame_salvamento1892.jpg","images/Frame_salvamento1895.jpg","images/Frame_salvamento1898.jpg","images/Frame_salvamento1901.jpg","images/Frame_salvamento2494.jpg","images/Frame_salvamento2497.jpg","images/Frame_salvamento2500.jpg","images/Frame_salvamento2503.jpg","images/Frame3600.jpg","images/Frame3734.jpg","images/Frame4527.jpg"]
 	# path_array_img = ["images/Frame117.jpg","images/Frame120.jpg","images/Frame123.jpg","images/Frame126.jpg"]
-	path_array_img = ["images/Frame_salvamento2494.jpg","images/Frame_salvamento2497.jpg","images/Frame_salvamento2500.jpg","images/Frame_salvamento2503.jpg"]
+	# path_array_img = ["images/Frame_salvamento2494.jpg","images/Frame_salvamento2497.jpg","images/Frame_salvamento2500.jpg","images/Frame_salvamento2503.jpg"]
 	# path_array_img = ["images/Frame673.jpg","images/Frame676.jpg","images/Frame679.jpg","images/Frame682.jpg"]
 	# path_array_img = ["images/Frame_salvamento1892.jpg","images/Frame_salvamento1895.jpg","images/Frame_salvamento1898.jpg","images/Frame_salvamento1901.jpg"]
 
-	gt,predi = read_gt_predi(path_array_img,"predict.p")
+	# gt,predi = read_gt_predi(path_array_img,"predict.p")
 
-	metrica(window,gt,predi)
+	# metrica(window,gt,predi)
 
